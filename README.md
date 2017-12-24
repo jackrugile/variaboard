@@ -1,6 +1,8 @@
 # futz
 
 [![Travis CI](https://img.shields.io/travis/jackrugile/futz.svg)](https://travis-ci.org/jackrugile/futz/)
+![Version](https://img.shields.io/github/package-json/v/jackrugile/futz.svg)
+[![MIT License](https://img.shields.io/github/license/jackrugile/futz.svg)](https://opensource.org/licenses/MIT)
 
 Control panel for futzing around with your demos.
 
