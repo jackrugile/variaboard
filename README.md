@@ -77,6 +77,8 @@ COMMON
 
 - [ ] test inclusion from minified files and from index.js
 
+- [ ] when and where to include source maps?
+
 PLUGIN TASKS
 - [ ] publish on npm
 - [ ] linting file

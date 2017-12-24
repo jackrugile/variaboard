@@ -14,6 +14,13 @@ const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
 const webserver = require('gulp-webserver');
 
+gulp.task('build', () => {
+  return sequence(
+    'build-css',
+    'build-js'
+  );
+});
+
 gulp.task('build-css', () => {
   return sequence(
     'clean-dist-css',
@@ -110,14 +117,14 @@ gulp.task('serve', () => {
   gulp.src('./')
     .pipe(webserver({
       'host': '0.0.0.0',
-      'fallback': './demo/index.html',
+      'fallback': './docs/index.html',
       'livereload': true,
       'open': true,
       'port': '4000'
     }));
 });
 
-gulp.task('watch', ['build-css', 'build-js', 'serve'], () => {
+gulp.task('watch', ['build', 'serve'], () => {
   gulp.watch('./src/css/**/*.css', ['build-css']);
   gulp.watch('./src/js/**/*.js', ['build-js']);
 });
