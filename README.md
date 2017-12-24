@@ -6,7 +6,10 @@
 
 Control panel for futzing around with your demos.
 
-### Inspiration and Reference
-- http://workshop.chromeexperiments.com/examples/gui/#1--Basic-Usage
-- http://bit101.github.io/quicksettings/demos/master_demo.html
-- http://control-panel.surge.sh/
+## Inspiration and Reference
+
+- dat.GUI - [Demo](https://workshop.chromeexperiments.com/examples/gui/) - [Code](https://github.com/dataarts/dat.gui) - by [Google Data Arts Team @dataarts](https://github.com/dataarts)
+- QuickSettings - [Demo](http://bit101.github.io/quicksettings/) - [Code](https://github.com/bit101/quicksettings) - by [Keith Peters @bit101](https://github.com/bit101)
+- Bfxr - [Demo](https://www.bfxr.net/) - [Code](https://github.com/increpare/bfxr) - by [Stephen Lavelle @increpare](https://github.com/increpare)
+- ControlKit - [Demo](https://github.com/automat/controlkit.js/tree/master/examples) - [Code](https://github.com/automat/controlkit.js) - by [Henryk Wollik @automat](https://github.com/automat)
+- Control Panel - [Demo](http://control-panel.surge.sh/) - [Code](https://github.com/freeman-lab/control-panel) - by [Jeremy Freeman @freeman-lab](https://github.com/freeman-lab)

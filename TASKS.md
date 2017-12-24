@@ -9,6 +9,7 @@
 - [ ] boolean
 - [ ] select dropdown
 - [ ] multiselect
+- [ ] pad control?
 
 ## Common
 
@@ -26,6 +27,10 @@
 - [ ] tool tip descriptions
 
 - [ ] randomize or mutate single field button
+
+- [ ] pinned or floating panel options
+
+- [ ] store history of changes, like bfxr?
 
 - [ ] precision (to fixed)
 - [ ] mousewheel up/down
@@ -69,7 +74,7 @@
 
 - [ ] custom easing for randomize and mutate, combine map and ease
 
-- [] fix issue with snapped value at end of easing?
+- [ ] fix issue with snapped value at end of easing?
 
 - [ ] is the mutate compensation working properly?
 
@@ -100,5 +105,3 @@ PLUGIN TASKS
 - [ ] jsdoc for methods
 
 'use strict';?
-
-clean up unused gulp stuff
