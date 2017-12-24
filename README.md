@@ -1,4 +1,7 @@
 # futz
+
+[![Travis CI](https://img.shields.io/travis/jackrugile/futz.svg)](https://travis-ci.org/jackrugile/futz/)
+
 Control panel for futzing around with your demos.
 
 
