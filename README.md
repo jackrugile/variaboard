@@ -84,6 +84,8 @@ COMMON
 
 - [ ] when and where to include source maps?
 
+- [ ] logo
+
 PLUGIN TASKS
 - [ ] publish on npm
 - [ ] linting file

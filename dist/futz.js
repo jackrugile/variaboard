@@ -479,4 +479,4 @@ module.exports = Futz;
 },{"./futz-button":1,"./futz-range-control":3}]},{},[4])(4)
 });
 
-//# sourceMappingURL=futz.js.map
+//# sourceMappingURL=sourcemaps/futz.js.map

@@ -32,7 +32,7 @@ gulp.task('build-css', () => {
 gulp.task('clean-dist-css', () => {
   return del.sync([
     './dist/*.css',
-    './dist/*.css.map'
+    './dist/sourcemaps/*.css.map'
   ],{ force: true });
 });
 
@@ -44,7 +44,7 @@ gulp.task('build-css-src', () => {
     .pipe(rename('futz.css'))
     .pipe(sourcemaps.init())
     .pipe(postcss(plugins))
-    .pipe(sourcemaps.write('.'))
+    .pipe(sourcemaps.write('./sourcemaps'))
     .pipe(gulp.dest('./dist'));
 });
 
@@ -57,7 +57,7 @@ gulp.task('build-css-min', () => {
     .pipe(rename('futz.min.css'))
     .pipe(sourcemaps.init())
     .pipe(postcss(plugins))
-    .pipe(sourcemaps.write('.'))
+    .pipe(sourcemaps.write('./sourcemaps'))
     .pipe(gulp.dest('./dist'))
     .pipe(gulp.dest('./docs/css'));
 });
@@ -73,7 +73,7 @@ gulp.task('build-js', () => {
 gulp.task('clean-dist-js', () => {
   return del.sync([
     './dist/*.js',
-    './dist/*.js.map'
+    './dist/sourcemaps/*.js.map'
   ],{ force: true });
 });
 
@@ -91,7 +91,7 @@ gulp.task('build-js-src', () => {
   .pipe(source('futz.js'))
   .pipe(buffer())
   .pipe(sourcemaps.init({ loadMaps: true }))
-  .pipe(sourcemaps.write('./'))
+  .pipe(sourcemaps.write('./sourcemaps'))
   .pipe(gulp.dest('./dist'));
 });
 
@@ -110,7 +110,7 @@ gulp.task('build-js-min', () => {
   .pipe(buffer())
   .pipe(uglify())
   .pipe(sourcemaps.init({ loadMaps: true }))
-  .pipe(sourcemaps.write('./'))
+  .pipe(sourcemaps.write('./sourcemaps'))
   .pipe(gulp.dest('./dist'))
   .pipe(gulp.dest('./docs/js'));
 });
@@ -119,7 +119,7 @@ gulp.task('serve', () => {
   gulp.src('./docs')
     .pipe(webserver({
       'host': '0.0.0.0',
-      'fallback': './docs/index.html',
+      'fallback': './index.html',
       'livereload': true,
       'open': true,
       'port': '4000'
