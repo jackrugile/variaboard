@@ -1,4 +1,4 @@
-# futz
+# Futz
 
 [![Travis CI](https://img.shields.io/travis/jackrugile/futz.svg)](https://travis-ci.org/jackrugile/futz/)
 ![Version](https://img.shields.io/github/package-json/v/jackrugile/futz.svg)

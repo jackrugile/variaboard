@@ -58,7 +58,8 @@ gulp.task('build-css-min', () => {
     .pipe(sourcemaps.init())
     .pipe(postcss(plugins))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest('./docs/css'));
 });
 
 gulp.task('build-js', () => {
@@ -110,11 +111,12 @@ gulp.task('build-js-min', () => {
   .pipe(uglify())
   .pipe(sourcemaps.init({ loadMaps: true }))
   .pipe(sourcemaps.write('./'))
-  .pipe(gulp.dest('./dist'));
+  .pipe(gulp.dest('./dist'))
+  .pipe(gulp.dest('./docs/js'));
 });
 
 gulp.task('serve', () => {
-  gulp.src('./')
+  gulp.src('./docs')
     .pipe(webserver({
       'host': '0.0.0.0',
       'fallback': './docs/index.html',
