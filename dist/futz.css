@@ -1,0 +1,174 @@
+body {
+  background: radial-gradient(#333, #111);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+canvas {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/* --- */
+
+.futz-panel,
+.futz-panel * {
+  box-sizing: border-box;
+}
+
+.futz-panel {
+  background: #000;
+  border-bottom: 1px solid #000;
+  border-right: 1px solid #000;
+  color: #fff;
+  font-family: ubuntu mono, monospace;
+  font-size: 16px;
+  left: 0;
+  max-width: 500px;
+  //opacity: 0.75;
+  position: fixed;
+  top: 0;
+  transition: opacity 200ms;
+  width: 100%;
+  z-index: 99;
+
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.futz-panel:hover {
+  opacity: 1;
+}
+
+.futz-title {
+  background: #222;
+  border-bottom: 1px solid #000;
+  color: #fff;
+  font-size: 0.9em;
+  font-weight: normal;
+  line-height: 1;
+  margin: 0;
+  padding: 0.6em 0.75em;
+}
+
+.futz-controls {
+}
+
+.futz-control {
+  background: #222;
+  border-bottom: 1px solid #000;
+  display: -webkit-box;
+  display: flex;
+  transition: background 200ms;
+}
+
+.futz-control:hover {
+  background: #333;
+  transition-duration: 0ms;
+}
+
+.futz-control:last-child {
+  border-bottom: none; 
+}
+
+.futz-control-title {
+  border-right: 1px solid #000;
+  -webkit-box-flex: 1;
+          flex: 1 1 30%;
+  font-size: 0.7em;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0;
+  padding: 0.6em 0.75em;
+  text-align: right;
+  transition: color 200ms;
+}
+
+.futz-control:hover .futz-control-title {
+  color: #fff;
+  transition-duration: 0ms;
+}
+
+.futz-control-value {
+  background: none;
+  border: none;
+  border-right: 1px solid #000;
+  border-radius: 0;
+  color: inherit;
+  -webkit-box-flex: 1;
+          flex: 1 1 10%;
+  font-family: inherit;
+  font-size: 0.7em;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0;
+  padding: 0.6em 0.75em;
+  transition: color 200ms;
+  -webkit-appearance: none;
+}
+
+.futz-control:hover .futz-control-value {
+  color: #fff;
+  transition-duration: 0ms;
+}
+
+.futz-control-value:focus {
+  outline: none;
+}
+
+.futz-control-button {
+  background: #444;
+  border: none;
+  border-right: 1px solid #000;
+  border-radius: 0;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.7em;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0;
+  padding: 1.2em 1.5em;
+  transition: background 200ms, color 200ms;
+  -webkit-appearance: none;
+}
+
+.futz-control-button:active {
+  background: #fff;
+  color: #000;
+  transition-duration: 0ms;
+}
+
+.futz-control-button:focus {
+  outline: none;
+}
+
+.futz-control-range {
+  cursor: ew-resize;
+  -webkit-box-flex: 1;
+          flex: 1 1 60%;
+  overflow: hidden;
+}
+
+.futz-control-range-inner {
+  background: #555;
+  height: 101%;
+  -webkit-transform-origin: 0% 50%;
+          transform-origin: 0% 50%;
+  transition: background 200ms;
+  width: 100%;
+}
+
+.futz-control:hover .futz-control-range-inner {
+  background: #fff;
+  transition-duration: 0ms;
+}
+
+/*# sourceMappingURL=futz.css.map */

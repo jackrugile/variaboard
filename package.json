@@ -1,0 +1,43 @@
+{
+  "name": "futz",
+  "author": "Jack Rugile <jack@jackrugile.com> (https://jackrugile.com)",
+  "version": "0.1.0",
+  "description": "",
+  "keywords": [
+    "controls",
+    "control panel",
+    "settings",
+    "parameters",
+    "parameterization",
+    "gui"
+  ],
+  "main": "src/js/futz.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackrugile/futz.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jackrugile/futz/issues"
+  },
+  "homepage": "https://github.com/jackrugile/futz.git#readme",
+  "devDependencies": {
+    "autoprefixer": "^7.2.3",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babelify": "^8.0.0",
+    "browserify": "^14.5.0",
+    "cssnano": "^3.10.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-postcss": "^7.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^2.6.2",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8",
+    "gulp-webserver": "^0.9.1",
+    "run-sequence": "^2.2.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

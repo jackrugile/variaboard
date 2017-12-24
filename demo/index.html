@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Futz Demo</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="Jack Rugile">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="../dist/futz.min.css">
+  </head>
+  <body>
+    <script src="../dist/futz.min.js"></script>
+    <script>
+      let futz = new Futz({
+        container: document.body,
+        namespace: 'futz',
+        title: 'Futz Control Panel'
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'width',
+        title: 'Width',
+        min: 0,
+        max: 400,
+        step: 0.5,
+        default: 17,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'height',
+        title: 'Height',
+        min: 0,
+        max: 300,
+        step: 0.5,
+        default: 47,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'rotation',
+        title: 'Rotation',
+        min: 0,
+        max: 300,
+        step: 1,
+        default: 0,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'radius',
+        title: 'Radius',
+        min: 1,
+        max: 140,
+        step: 1,
+        default: 10,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'hue',
+        title: 'Hue',
+        min: 0,
+        max: 360,
+        step: 1,
+        default: 0,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'saturation',
+        title: 'Saturation',
+        min: 50,
+        max: 100,
+        step: 1,
+        default: 100,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'lightness',
+        title: 'Lightness',
+        min: 20,
+        max: 80,
+        step: 1,
+        default: 50,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addControl({
+        type: 'range',
+        id: 'alpha',
+        title: 'Alpha',
+        min: 0.5,
+        max: 1,
+        step: 0.01,
+        default: 1,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      futz.addButton({
+        id: 'randomize',
+        title: 'Randomize All',
+        callback: () => {
+          futz.randomize();
+        }
+      });
+
+      futz.addButton({
+        id: 'mutate',
+        title: 'Mutate All',
+        callback: () => {
+          futz.mutate();
+        }
+      });
+
+      let c = document.createElement('canvas');
+      let ctx = c.getContext('2d');
+      let w = 400;
+      let h = 400;
+      let dpr = window.devicePixelRatio;
+      c.width = w * dpr;
+      c.height = h * dpr;
+      c.style.width = `${w}px`;
+      c.style.height = `${h}px`;
+      ctx.scale(dpr, dpr);
+      document.body.appendChild(c);
+
+      function loop() {
+        requestAnimationFrame(loop);
+        
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = '#000'
+        ctx.fillRect(0, 0, w, h);
+        
+        ctx.globalCompositeOperation = 'lighter';
+        
+        ctx.save();
+          ctx.translate(w * 0.25, h / 2);
+          ctx.rotate(futz.get('rotation') / 360 * Math.PI * 2);
+          ctx.fillStyle = `hsla(${futz.get('hue') - 90}, ${futz.get('saturation')}%, ${futz.get('lightness')}%, ${futz.get('alpha')})`;
+          ctx.fillRect(futz.get('width') / -2, futz.get('height') / -2, futz.get('width'), futz.get('height'));
+        ctx.restore();
+        
+        ctx.save();
+          ctx.translate(w / 2, h / 2);
+          ctx.rotate(futz.get('rotation') / 360 * Math.PI * 2);
+          ctx.fillStyle = `hsla(${futz.get('hue')}, ${futz.get('saturation')}%, ${futz.get('lightness')}%, ${futz.get('alpha')})`;
+          ctx.fillRect(futz.get('width') / -2, futz.get('height') / -2, futz.get('width'), futz.get('height'));
+        ctx.restore();
+        
+        ctx.save();
+          ctx.translate(w * 0.75, h / 2);
+          ctx.rotate(futz.get('rotation') / 360 * Math.PI * 2);
+          ctx.fillStyle = `hsla(${futz.get('hue') + 90}, ${futz.get('saturation')}%, ${futz.get('lightness')}%, ${futz.get('alpha')})`;
+          ctx.fillRect(futz.get('width') / -2, futz.get('height') / -2, futz.get('width'), futz.get('height'));
+        ctx.restore();
+        
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${futz.get('hue') + 90}, ${futz.get('saturation')}%, ${futz.get('lightness')}%, ${futz.get('alpha')})`;
+        ctx.arc(w * 0.25, h / 2, futz.get('radius'), 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${futz.get('hue') + 180}, ${futz.get('saturation')}%, ${futz.get('lightness')}%, ${futz.get('alpha')})`;
+        ctx.arc(w / 2, h / 2, futz.get('radius'), 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${futz.get('hue') - 90}, ${futz.get('saturation')}%, ${futz.get('lightness')}%, ${futz.get('alpha')})`;
+        ctx.arc(w * 0.75, h / 2, futz.get('radius'), 0, Math.PI * 2);
+        ctx.fill();
+        
+      }
+
+      loop();
+    </script>
+  </body>
+</html>
