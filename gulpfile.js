@@ -116,7 +116,20 @@ gulp.task('build-js-min', () => {
   .pipe(gulp.dest('./docs/js'));
 });
 
-gulp.task('doc', function (cb) {
+gulp.task('docs', () => {
+  return sequence(
+    'clean-docs',
+    'build-docs'
+  );
+});
+
+gulp.task('clean-docs', () => {
+  return del.sync([
+    './docs/gen'
+  ], { force: true });
+});
+
+gulp.task('build-docs', function (cb) {
   gulp.src(['./src/js/**/*.js'], { read: false })
     .pipe(jsdoc(cb));
 });
