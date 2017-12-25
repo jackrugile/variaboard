@@ -28,7 +28,7 @@
 
 - [ ] randomize or mutate single field button
 
-- [ ] pinned or floating panel options
+- [ ] pinned, floating, or block panel options
 
 - [ ] store history of changes, like bfxr?
 
@@ -103,5 +103,6 @@ PLUGIN TASKS
 - [ ] unpkg
 - [ ] jsdelivr
 - [ ] jsdoc for methods
+  - [ ] figure out way to view source of function
 
 'use strict';?

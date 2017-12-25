@@ -6,6 +6,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var FutzButton = function () {
+
+  /**
+   * Create a Futz button
+   */
+
   function FutzButton(futz, config) {
     _classCallCheck(this, FutzButton);
 
@@ -17,6 +22,10 @@ var FutzButton = function () {
     this.createDOM();
     this.listen();
   }
+
+  /**
+   * Create necessary DOM elements
+   */
 
   _createClass(FutzButton, [{
     key: 'createDOM',
@@ -36,6 +45,11 @@ var FutzButton = function () {
       // add control to panel
       this.futz.dom.controls.appendChild(this.dom.control);
     }
+
+    /**
+     * Setup event listeners
+     */
+
   }, {
     key: 'listen',
     value: function listen() {
@@ -45,6 +59,13 @@ var FutzButton = function () {
         return _this.onButtonClick(e);
       });
     }
+
+    /**
+     * On button click event
+     *
+     * @param {object} e - Event object
+     */
+
   }, {
     key: 'onButtonClick',
     value: function onButtonClick(e) {
@@ -63,6 +84,10 @@ module.exports = FutzButton;
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Create a Futz control
+ */
 
 var FutzControl = function () {
   function FutzControl(futz, config) {
@@ -135,6 +160,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var FutzControl = require('./futz-control');
+
+/**
+ * Create a Futz range control
+ *
+ * @extends FutzControl
+ */
 
 var FutzRangeControl = function (_FutzControl) {
   _inherits(FutzRangeControl, _FutzControl);
@@ -272,9 +303,22 @@ var FutzButton = require('./futz-button');
 var FutzRangeControl = require('./futz-range-control');
 
 var Futz = function () {
+
+  /**
+   * Create a Futz control panel
+   *
+   * @param {object} config - Configuration object
+   * @param {object|string} [config.container=document.body] - DOM element or CSS selector
+   * @param {string} [config.title="Control Panel"] - Title of the panel
+   *
+   * @requires {@linkcode FutzButton}
+   * @requires {@linkcode FutzRangeControl}
+   */
+
   function Futz(config) {
     _classCallCheck(this, Futz);
 
+    this.namespace = 'futz';
     this.controls = {};
     this.buttons = {};
 
@@ -292,19 +336,22 @@ var Futz = function () {
     this.raf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
-    this.namespace = config.namespace !== undefined ? config.namespace : 'futz';
     this.title = config.title !== undefined ? config.title : 'Futz';
 
     this.createDOM();
     this.listen();
   }
 
+  /**
+   * Create necessary DOM elements
+   */
+
   _createClass(Futz, [{
     key: 'createDOM',
     value: function createDOM() {
       this.dom = {};
 
-      // dom
+      // container
       this.dom.container = this.container;
 
       // panel
@@ -325,6 +372,11 @@ var Futz = function () {
       // add panel to container
       this.dom.container.appendChild(this.dom.panel);
     }
+
+    /**
+     * Setup event listeners
+     */
+
   }, {
     key: 'listen',
     value: function listen() {
@@ -337,6 +389,13 @@ var Futz = function () {
         return _this.onWindowMousemove(e);
       });
     }
+
+    /**
+     * On window mouse up event
+     *
+     * @param {object} e - Event object
+     */
+
   }, {
     key: 'onWindowMouseup',
     value: function onWindowMouseup(e) {
@@ -346,6 +405,13 @@ var Futz = function () {
         control.onWindowMouseup(e);
       }
     }
+
+    /**
+     * On window mouse move event
+     *
+     * @param {object} e - Event object
+     */
+
   }, {
     key: 'onWindowMousemove',
     value: function onWindowMousemove(e) {
@@ -356,6 +422,11 @@ var Futz = function () {
         control.onWindowMousemove(e);
       }
     }
+
+    /**
+     * Update based on requestAnimationFrame()
+     */
+
   }, {
     key: 'update',
     value: function update() {
@@ -377,6 +448,16 @@ var Futz = function () {
         });
       }
     }
+
+    /**
+     * Add a button
+     *
+     * @param {object} config - Configuration object
+     * @param {object} config.id - ID slug
+     * @param {object} config.title - Title text
+     * @param {object} [config.callback=() => {}] - Callback function for button press
+     */
+
   }, {
     key: 'addButton',
     value: function addButton(config) {

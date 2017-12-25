@@ -6,6 +6,7 @@ const cssnano = require('cssnano');
 const del = require('del');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
+const jsdoc = require('gulp-jsdoc3');
 const postcss = require('gulp-postcss');
 const rename = require('gulp-rename');
 const sequence = require('run-sequence');
@@ -113,6 +114,11 @@ gulp.task('build-js-min', () => {
   .pipe(sourcemaps.write('./sourcemaps'))
   .pipe(gulp.dest('./dist'))
   .pipe(gulp.dest('./docs/js'));
+});
+
+gulp.task('doc', function (cb) {
+  gulp.src(['./src/js/**/*.js'], { read: false })
+    .pipe(jsdoc(cb));
 });
 
 gulp.task('serve', () => {

@@ -1,7 +1,13 @@
 const FutzControl = require('./futz-control');
 
+/**
+ * Create a Futz range control
+ *
+ * @extends FutzControl
+ */
+
 class FutzRangeControl extends FutzControl {
-  
+
   constructor(futz, config) {
     super(futz, config);
     this.min = config.min;
@@ -17,14 +23,14 @@ class FutzRangeControl extends FutzControl {
     
     this.set(this.value);
   }
-  
+
   createDOM() {
     super.createDOM();
-    
+
     // range
     this.dom.range = document.createElement('div');
     this.dom.range.classList.add(`${this.futz.namespace}-control-range`);
-    
+
     // range inner
     this.dom.rangeInner = document.createElement('div');
     this.dom.rangeInner.classList.add(`${this.futz.namespace}-control-range-inner`);
@@ -32,17 +38,17 @@ class FutzRangeControl extends FutzControl {
     
     this.dom.control.appendChild(this.dom.range);
   }
-  
+
   listen() {
     this.dom.value.addEventListener('change', (e) => this.onValueChange(e));
     this.dom.range.addEventListener('mousedown', (e) => this.onValueMousedown(e));
   }
-  
+
   onValueChange(e) {
     this.set(this.dom.value.value);
     this.valueTarget = this.value;
   }
-  
+
   onValueMousedown(e) {
     this.futz.mouse.down = true;
     this.futz.mouse.anchor.x = e.clientX;
@@ -50,17 +56,17 @@ class FutzRangeControl extends FutzControl {
     this.mouseIsDown = true;
     this.setDragValue();
   }
-  
+
   onWindowMouseup(e) {
     this.mouseIsDown = false;
   }
-  
+
   onWindowMousemove(e) {
     if(this.mouseIsDown) {
       this.setDragValue();
     }
   }
-  
+
   setDragValue() {
     let left = this.dom.range.offsetLeft;
     let width = this.dom.range.offsetWidth;
@@ -68,7 +74,7 @@ class FutzRangeControl extends FutzControl {
     this.set(val);
     this.valueTarget = this.value;
   }
-  
+
   easeSet() {
     if(Math.abs(this.value - this.valueTarget) > this.step / 2) {
       this.value += (this.valueTarget - this.value) * 0.2;
@@ -79,7 +85,7 @@ class FutzRangeControl extends FutzControl {
       this.set(this.value); 
     }
   }
-  
+
   set(val, bypassRounding) {
     // sanitize value
     val = parseFloat(val);
@@ -97,7 +103,7 @@ class FutzRangeControl extends FutzControl {
     // set the title attribute for the control
     this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}`);
   }
-  
+
 }
 
 module.exports = FutzRangeControl;
