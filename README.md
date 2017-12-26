@@ -6,8 +6,9 @@
 
 Control panel for tweaking parameters on front end projects.
 
-- **[View Demo](https://jackrugile.github.io/futz/)**
-- **[View Documentation](https://jackrugile.github.io/futz/jsdoc/)**
+- **[GitHub Repository](https://github.com/jackrugile/futz)**
+- **[Demo](https://jackrugile.github.io/futz/)**
+- **[Documentation](https://jackrugile.github.io/futz/jsdoc/)**
 
 [![Screenshot](https://user-images.githubusercontent.com/726153/34353443-6031dfb2-e9e5-11e7-845a-9f96de1f125c.png)](https://jackrugile.github.io/futz/)
 
