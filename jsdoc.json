@@ -3,7 +3,7 @@
     "allowUnknownTags": true
   },
   "opts": {
-    "destination": "./docs/gen",
+    "destination": "./docs/jsdoc",
     "template": "node_modules/minami"
   },
   "plugins": [
@@ -16,8 +16,6 @@
       "outputSourceFiles": true
     },
     "outputSourceFiles": true,
-    "path": "ink-docstrap",
-    "theme": "lumen",
     "navType": "vertical",
     "linenums": true,
     "dateFormat": "MMMM Do YYYY, h:mm:ss a",

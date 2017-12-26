@@ -125,7 +125,7 @@ gulp.task('docs', () => {
 
 gulp.task('clean-docs', () => {
   return del.sync([
-    './docs/gen'
+    './docs/jsdoc'
   ], { force: true });
 });
 
