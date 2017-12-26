@@ -26,6 +26,8 @@
 - [ ] collapsible panels
 - [ ] tool tip descriptions
 
+- [ ] change classes to more generic names
+
 - [ ] randomize or mutate single field button
 
 - [ ] pinned, floating, or block panel options

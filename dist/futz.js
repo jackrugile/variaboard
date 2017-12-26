@@ -5,19 +5,18 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var FutzButton = function () {
+/**
+ * Create a button
+ */
 
-  /**
-   * Create a Futz button
-   */
-
-  function FutzButton(futz, config) {
-    _classCallCheck(this, FutzButton);
+var Button = function () {
+  function Button(futz, config) {
+    _classCallCheck(this, Button);
 
     this.futz = futz;
     this.id = config.id;
     this.title = config.title;
-    this.callback = config.callback;
+    this.callback = config.callback !== undefined ? config.callback : function () {};
 
     this.createDOM();
     this.listen();
@@ -27,7 +26,7 @@ var FutzButton = function () {
    * Create necessary DOM elements
    */
 
-  _createClass(FutzButton, [{
+  _createClass(Button, [{
     key: 'createDOM',
     value: function createDOM() {
       this.dom = {};
@@ -42,7 +41,7 @@ var FutzButton = function () {
       this.dom.button.textContent = this.title;
       this.dom.control.appendChild(this.dom.button);
 
-      // add control to panel
+      // add to control to panel
       this.futz.dom.controls.appendChild(this.dom.control);
     }
 
@@ -73,10 +72,10 @@ var FutzButton = function () {
     }
   }]);
 
-  return FutzButton;
+  return Button;
 }();
 
-module.exports = FutzButton;
+module.exports = Button;
 
 },{}],2:[function(require,module,exports){
 'use strict';
@@ -86,19 +85,19 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * Create a Futz control
+ * Create a control
  */
 
-var FutzControl = function () {
-  function FutzControl(futz, config) {
-    _classCallCheck(this, FutzControl);
+var Control = function () {
+  function Control(futz, config) {
+    _classCallCheck(this, Control);
 
     this.futz = futz;
     this.type = config.type;
     this.id = config.id;
     this.title = config.title;
     this.default = config.default;
-    this.randomizable = config.randomizable !== undefined ? config.locked : true;
+    this.randomizable = config.randomizable !== undefined ? config.randomizable : true;
     this.mutable = config.mutable !== undefined ? config.mutable : true;
     this.locked = config.locked !== undefined ? config.locked : false;
     this.value = this.default;
@@ -106,7 +105,7 @@ var FutzControl = function () {
     this.createDOM();
   }
 
-  _createClass(FutzControl, [{
+  _createClass(Control, [{
     key: 'createDOM',
     value: function createDOM() {
       this.dom = {};
@@ -141,10 +140,10 @@ var FutzControl = function () {
     }
   }]);
 
-  return FutzControl;
+  return Control;
 }();
 
-module.exports = FutzControl;
+module.exports = Control;
 
 },{}],3:[function(require,module,exports){
 'use strict';
@@ -159,21 +158,39 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var FutzControl = require('./futz-control');
+var Control = require('./control');
+var Calc = require('../util/calc');
 
 /**
- * Create a Futz range control
+ * Create a range control
  *
- * @extends FutzControl
+ * @param {object} futz - Reference to parent Futz instance
+ * @param {object} config - Configuration object
+ * @param {string} config.id - Unique id/slug
+ * @param {string} config.title - UI display title
+ * @param {number} config.min - Minimum value
+ * @param {number} config.max - Maximum value
+ * @param {number} config.step - Step size
+ * @param {number} config.default - Starting value
+ * @param {boolean} config.randomizable - Can be randomized individually and by randomizing all
+ * @param {boolean} config.mutable - Can be mutated individually and by mutating all
+ * @param {boolean} config.locked - Temporarily toggle whether the control is affected by randomization and mutation
+ *
+ * @extends Control
+ *
+ * @requires {@link Control}
+ * @requires {@link Calc}
  */
 
-var FutzRangeControl = function (_FutzControl) {
-  _inherits(FutzRangeControl, _FutzControl);
+var Range = function (_Control) {
+  _inherits(Range, _Control);
 
-  function FutzRangeControl(futz, config) {
-    _classCallCheck(this, FutzRangeControl);
+  function Range(futz, config) {
+    _classCallCheck(this, Range);
 
-    var _this = _possibleConstructorReturn(this, (FutzRangeControl.__proto__ || Object.getPrototypeOf(FutzRangeControl)).call(this, futz, config));
+    var _this = _possibleConstructorReturn(this, (Range.__proto__ || Object.getPrototypeOf(Range)).call(this, futz, config));
+
+    _this.type = 'range';
 
     _this.min = config.min;
     _this.max = config.max;
@@ -190,10 +207,10 @@ var FutzRangeControl = function (_FutzControl) {
     return _this;
   }
 
-  _createClass(FutzRangeControl, [{
+  _createClass(Range, [{
     key: 'createDOM',
     value: function createDOM() {
-      _get(FutzRangeControl.prototype.__proto__ || Object.getPrototypeOf(FutzRangeControl.prototype), 'createDOM', this).call(this);
+      _get(Range.prototype.__proto__ || Object.getPrototypeOf(Range.prototype), 'createDOM', this).call(this);
 
       // range
       this.dom.range = document.createElement('div');
@@ -246,11 +263,17 @@ var FutzRangeControl = function (_FutzControl) {
       }
     }
   }, {
+    key: 'randomize',
+    value: function randomize() {
+      this.settled = false;
+      this.valueTarget = Calc.rand(this.min, this.max);
+    }
+  }, {
     key: 'setDragValue',
     value: function setDragValue() {
       var left = this.dom.range.offsetLeft;
       var width = this.dom.range.offsetWidth;
-      var val = this.futz.map(this.futz.mouse.x, left, left + width, this.min, this.max);
+      var val = Calc.map(this.futz.mouse.x, left, left + width, this.min, this.max);
       this.set(val);
       this.valueTarget = this.value;
     }
@@ -272,35 +295,36 @@ var FutzRangeControl = function (_FutzControl) {
       // sanitize value
       val = parseFloat(val);
       val = isNaN(val) ? this.default : val;
-      val = this.futz.clamp(val, this.min, this.max);
-      val = bypassRounding ? val : this.futz.roundToNearestInterval(val, this.step);
+      val = Calc.clamp(val, this.min, this.max);
+      val = bypassRounding ? val : Calc.roundToNearestInterval(val, this.step);
       this.value = val;
 
       // set input value
       this.dom.value.value = this.value.toFixed(this.places);
 
       // set range value
-      this.dom.rangeInner.style.transform = 'scaleX(' + this.futz.map(this.value, this.min, this.max, 0, 1) + ')';
+      this.dom.rangeInner.style.transform = 'scaleX(' + Calc.map(this.value, this.min, this.max, 0, 1) + ')';
 
       // set the title attribute for the control
       this.dom.control.setAttribute('title', this.title + ': ' + this.value.toFixed(this.places));
     }
   }]);
 
-  return FutzRangeControl;
-}(FutzControl);
+  return Range;
+}(Control);
 
-module.exports = FutzRangeControl;
+module.exports = Range;
 
-},{"./futz-control":2}],4:[function(require,module,exports){
+},{"../util/calc":5,"./control":2}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var FutzButton = require('./futz-button');
-var FutzRangeControl = require('./futz-range-control');
+var Button = require('./button');
+var Range = require('./controls/range');
+var Calc = require('./util/calc');
 
 var Futz = function () {
 
@@ -311,8 +335,9 @@ var Futz = function () {
    * @param {object|string} [config.container=document.body] - DOM element or CSS selector
    * @param {string} [config.title="Control Panel"] - Title of the panel
    *
-   * @requires {@linkcode FutzButton}
-   * @requires {@linkcode FutzRangeControl}
+   * @requires {@link Button}
+   * @requires {@link Range}
+   * @requires {@link Calc}
    */
 
   function Futz(config) {
@@ -461,35 +486,29 @@ var Futz = function () {
   }, {
     key: 'addButton',
     value: function addButton(config) {
-      for (var key in this.buttons) {
-        if (config.id === this.buttons[key].id) {
-          console.error('Futz: A button with an id of \'' + config.id + '\' is already in use.');
-          return;
-        }
-      }
-      this.buttons[config.id] = new FutzButton(this, config);
+      this.buttons[config.id] = new Button(this, config);
     }
+
+    /**
+     * Add a range control via {@linkcode Range}
+     *
+     * @param {object} config - Configuration object
+     * @param {string} config.id - Unique id/slug
+     * @param {string} config.title - UI display title
+     * @param {number} config.min - Minimum value
+     * @param {number} config.max - Maximum value
+     * @param {number} config.step - Step size
+     * @param {number} config.default - Starting value
+     * @param {boolean} config.randomizable - Can be randomized individually and by randomizing all
+     * @param {boolean} config.mutable - Can be mutated individually and by mutating all
+     * @param {boolean} config.locked - Temporarily toggle whether the control is affected by randomization and mutation
+     */
+
   }, {
-    key: 'addControl',
-    value: function addControl(config) {
-      var control = null;
-
-      for (var key in this.controls) {
-        if (config.id === this.controls[key].id) {
-          console.error('Futz: A control with an id of \'' + config.id + '\' is already in use.');
-          return;
-        }
-      }
-
-      switch (config.type) {
-        case 'range':
-          control = new FutzRangeControl(this, config);
-          break;
-      }
-
-      if (control) {
-        this.controls[control.id] = control;
-      }
+    key: 'addRange',
+    value: function addRange(config) {
+      var control = new Range(this, config);
+      this.controls[control.id] = control;
     }
   }, {
     key: 'get',
@@ -500,12 +519,10 @@ var Futz = function () {
     key: 'randomize',
     value: function randomize() {
       for (var key in this.controls) {
-        var control = this.controls[key];
-        control.settled = false;
-        control.valueTarget = this.rand(control.min, control.max);
-        cancelAnimationFrame(this.raf);
-        this.update();
+        this.controls[key].randomize();
       }
+      cancelAnimationFrame(this.raf);
+      this.update();
     }
   }, {
     key: 'mutate',
@@ -515,40 +532,15 @@ var Futz = function () {
         var size = (control.max - control.min) / 15;
         control.settled = false;
         if (control.value <= control.min) {
-          control.valueTarget = this.rand(control.step, control.min + size);
+          control.valueTarget = Calc.rand(control.step, control.min + size);
         } else if (control.value >= control.max) {
-          control.valueTarget = this.rand(control.max - size, control.max - control.step);
+          control.valueTarget = Calc.rand(control.max - size, control.max - control.step);
         } else {
-          control.valueTarget = control.value + this.rand(-size, size);
+          control.valueTarget = control.value + Calc.rand(-size, size);
         }
         cancelAnimationFrame(this.raf);
         this.update();
       }
-    }
-  }, {
-    key: 'rand',
-    value: function rand(min, max, ease) {
-      if (max === undefined) {
-        max = min;
-        min = 0;
-      }
-      var random = Math.random();
-      return random * (max - min) + min;
-    }
-  }, {
-    key: 'clamp',
-    value: function clamp(val, min, max) {
-      return Math.max(Math.min(val, max), min);
-    }
-  }, {
-    key: 'map',
-    value: function map(val, inMin, inMax, outMin, outMax) {
-      return (outMax - outMin) * ((val - inMin) / (inMax - inMin)) + outMin;
-    }
-  }, {
-    key: 'roundToNearestInterval',
-    value: function roundToNearestInterval(value, interval) {
-      return Math.round(value / interval) * interval;
     }
   }]);
 
@@ -557,7 +549,94 @@ var Futz = function () {
 
 module.exports = Futz;
 
-},{"./futz-button":1,"./futz-range-control":3}]},{},[4])(4)
+},{"./button":1,"./controls/range":3,"./util/calc":5}],5:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Calculation functions and helpers
+ */
+
+var Calc = function () {
+  function Calc() {
+    _classCallCheck(this, Calc);
+  }
+
+  _createClass(Calc, null, [{
+    key: "rand",
+
+
+    /**
+    * Get a random float within a range. If only one argument is passed, it is used as the max and the min becomes zero.
+    *
+    * @param {number} min - Minimum range value
+    * @param {number} max - Maximum range value
+    *
+    * @example
+    * // two arguments
+    * Calc.rand(2, 18);
+    * // -> random float between 2 and 18
+    *
+    * // single argument
+    * Calc.rand(42.5);
+    * // -> random float between 0 and 42.5
+    *
+    * @returns {number} Random float within the range
+    */
+    value: function rand(min, max) {
+      if (max === undefined) {
+        max = min;
+        min = 0;
+      }
+      return Math.random() * (max - min) + min;
+    }
+
+    /**
+    * Clamp a value to a range
+    *
+    * @param {number} val - Input value
+    * @param {number} min - Minimum range value
+    * @param {number} max - Maximum range value
+    *
+    * @example
+    * Calc.clamp(3, 10, 150);
+    * // -> 10
+    *
+    * Calc.clamp(400, 10, 150);
+    * // -> 150
+    *
+    * Calc.clamp(75, 10, 100);
+    * // -> 75
+    *
+    * @returns {number} Clamped value within range
+    */
+
+  }, {
+    key: "clamp",
+    value: function clamp(val, min, max) {
+      return Math.max(Math.min(val, max), min);
+    }
+  }, {
+    key: "map",
+    value: function map(val, inMin, inMax, outMin, outMax) {
+      return (outMax - outMin) * ((val - inMin) / (inMax - inMin)) + outMin;
+    }
+  }, {
+    key: "roundToNearestInterval",
+    value: function roundToNearestInterval(value, interval) {
+      return Math.round(value / interval) * interval;
+    }
+  }]);
+
+  return Calc;
+}();
+
+module.exports = Calc;
+
+},{}]},{},[4])(4)
 });
 
 //# sourceMappingURL=sourcemaps/futz.js.map

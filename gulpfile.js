@@ -130,8 +130,9 @@ gulp.task('clean-docs', () => {
 });
 
 gulp.task('build-docs', function (cb) {
-  gulp.src(['./src/js/**/*.js'], { read: false })
-    .pipe(jsdoc(cb));
+  let config = require('./jsdoc.json');
+  gulp.src(['./JSDOC.md', './src/js/**/*.js'], { read: false })
+    .pipe(jsdoc(config, cb));
 });
 
 gulp.task('serve', () => {

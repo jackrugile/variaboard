@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Home - Documentation</title>
+    <title>controls/range.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,39 +29,151 @@
 
 <div id="main">
     
+    <h1 class="page-title">controls/range.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Control = require('./control');
+const Calc = require('../util/calc');
 
+/**
+ * Create a range control
+ *
+ * @param {object} futz - Reference to parent Futz instance
+ * @param {object} config - Configuration object
+ * @param {string} config.id - Unique id/slug
+ * @param {string} config.title - UI display title
+ * @param {number} config.min - Minimum value
+ * @param {number} config.max - Maximum value
+ * @param {number} config.step - Step size
+ * @param {number} config.default - Starting value
+ * @param {boolean} config.randomizable - Can be randomized individually and by randomizing all
+ * @param {boolean} config.mutable - Can be mutated individually and by mutating all
+ * @param {boolean} config.locked - Temporarily toggle whether the control is affected by randomization and mutation
+ *
+ * @extends Control
+ *
+ * @requires {@link Control}
+ * @requires {@link Calc}
+ */
 
+class Range extends Control {
 
+  constructor(futz, config) {
+    super(futz, config);
+    this.type = 'range';
 
+    this.min = config.min;
+    this.max = config.max;
+    this.step = config.step !== undefined ? Math.abs(config.step) : 1;
+    this.places = this.step.toString().indexOf('.') > -1 ? this.step.toString().split('.')[1].length : 0;
+    this.valueTarget = this.value;
 
+    this.mouseIsDown = false;
+    this.settled = false;
 
+    this.listen();
 
+    this.set(this.value);
+  }
 
+  createDOM() {
+    super.createDOM();
 
+    // range
+    this.dom.range = document.createElement('div');
+    this.dom.range.classList.add(`${this.futz.namespace}-control-range`);
+
+    // range inner
+    this.dom.rangeInner = document.createElement('div');
+    this.dom.rangeInner.classList.add(`${this.futz.namespace}-control-range-inner`);
+    this.dom.range.appendChild(this.dom.rangeInner);
     
+    this.dom.control.appendChild(this.dom.range);
+  }
 
+  listen() {
+    this.dom.value.addEventListener('change', (e) => this.onValueChange(e));
+    this.dom.range.addEventListener('mousedown', (e) => this.onValueMousedown(e));
+  }
 
-    <section class="readme">
-        <article><h1>Futz Documentation</h1><p><a href="https://travis-ci.org/jackrugile/futz/"><img src="https://img.shields.io/travis/jackrugile/futz.svg" alt="Travis CI"></a>
-<img src="https://img.shields.io/github/package-json/v/jackrugile/futz.svg" alt="Version">
-<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/github/license/jackrugile/futz.svg" alt="MIT License"></a></p>
-<p>Control panel for futzing around with your demos.</p>
-<h2>Inspiration and Reference</h2><ul>
-<li>dat.GUI - <a href="https://workshop.chromeexperiments.com/examples/gui/">Demo</a> - <a href="https://github.com/dataarts/dat.gui">Code</a> - by <a href="https://github.com/dataarts">Google Data Arts Team @dataarts</a></li>
-<li>QuickSettings - <a href="http://bit101.github.io/quicksettings/">Demo</a> - <a href="https://github.com/bit101/quicksettings">Code</a> - by <a href="https://github.com/bit101">Keith Peters @bit101</a></li>
-<li>Bfxr - <a href="https://www.bfxr.net/">Demo</a> - <a href="https://github.com/increpare/bfxr">Code</a> - by <a href="https://github.com/increpare">Stephen Lavelle @increpare</a></li>
-<li>ControlKit - <a href="https://github.com/automat/controlkit.js/tree/master/examples">Demo</a> - <a href="https://github.com/automat/controlkit.js">Code</a> - by <a href="https://github.com/automat">Henryk Wollik @automat</a></li>
-<li>Control Panel - <a href="http://control-panel.surge.sh/">Demo</a> - <a href="https://github.com/freeman-lab/control-panel">Code</a> - by <a href="https://github.com/freeman-lab">Jeremy Freeman @freeman-lab</a></li>
-</ul></article>
+  onValueChange(e) {
+    this.set(this.dom.value.value);
+    this.valueTarget = this.value;
+  }
+
+  onValueMousedown(e) {
+    this.futz.mouse.down = true;
+    this.futz.mouse.anchor.x = e.clientX;
+    this.futz.mouse.anchor.y = e.clientY;
+    this.mouseIsDown = true;
+    this.setDragValue();
+  }
+
+  onWindowMouseup(e) {
+    this.mouseIsDown = false;
+  }
+
+  onWindowMousemove(e) {
+    if(this.mouseIsDown) {
+      this.setDragValue();
+    }
+  }
+
+  randomize() {
+    this.settled = false;
+    this.valueTarget = Calc.rand(this.min, this.max);
+  }
+
+  setDragValue() {
+    let left = this.dom.range.offsetLeft;
+    let width = this.dom.range.offsetWidth;
+    let val = Calc.map(this.futz.mouse.x, left, left + width, this.min, this.max);
+    this.set(val);
+    this.valueTarget = this.value;
+  }
+
+  easeSet() {
+    if(Math.abs(this.value - this.valueTarget) > this.step / 2) {
+      this.value += (this.valueTarget - this.value) * 0.2;
+      this.set(this.value, true);
+    } else {
+      this.settled = true;
+      this.value = this.valueTarget;
+      this.set(this.value); 
+    }
+  }
+
+  set(val, bypassRounding) {
+    // sanitize value
+    val = parseFloat(val);
+    val = isNaN(val) ? this.default : val;
+    val = Calc.clamp(val, this.min, this.max);
+    val = bypassRounding ? val : Calc.roundToNearestInterval(val, this.step);
+    this.value = val;
+    
+    // set input value
+    this.dom.value.value = this.value.toFixed(this.places);
+    
+    // set range value
+    this.dom.rangeInner.style.transform = `scaleX(${Calc.map(this.value, this.min, this.max, 0, 1)})`;
+    
+    // set the title attribute for the control
+    this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}`);
+  }
+
+}
+
+module.exports = Range;
+</code></pre>
+        </article>
     </section>
-
-
 
 
 
