@@ -131,7 +131,7 @@ gulp.task('clean-docs', () => {
 
 gulp.task('build-docs', function (cb) {
   let config = require('./jsdoc.json');
-  gulp.src(['./JSDOC.md', './src/js/**/*.js'], { read: false })
+  gulp.src(['./README.md', './src/js/**/*.js'], { read: false })
     .pipe(jsdoc(config, cb));
 });
 
