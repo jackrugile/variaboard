@@ -6,8 +6,8 @@
 
 Control panel for tweaking parameters on front end projects.
 
-**[View Demo](https://jackrugile.github.io/futz/)**
-**[View Documentation](https://jackrugile.github.io/futz/gen/)**
+- **[View Demo](https://jackrugile.github.io/futz/)**
+- **[View Documentation](https://jackrugile.github.io/futz/gen/)**
 
 [![Screenshot](screenshot.png)](https://jackrugile.github.io/futz/)
 
