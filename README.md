@@ -4,7 +4,12 @@
 ![Version](https://img.shields.io/github/package-json/v/jackrugile/futz.svg)
 [![MIT License](https://img.shields.io/github/license/jackrugile/futz.svg)](https://opensource.org/licenses/MIT)
 
-Control panel for futzing around with your demos.
+Control panel for tweaking parameters on front end projects.
+
+**[View Demo](https://jackrugile.github.io/futz/)**
+**[View Documentation](https://jackrugile.github.io/futz/gen/)**
+
+[![Screenshot](screenshot.png)](https://jackrugile.github.io/futz/)
 
 ## Inspiration and Reference
 
