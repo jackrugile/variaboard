@@ -2,10 +2,10 @@ const Button = require('./button');
 const Range = require('./controls/range');
 const Calc = require('./util/calc');
 
-class Futz {
+class VariaBoard {
 
   /**
-   * Create a Futz control panel
+   * Create a VariaBoard control panel
    *
    * @param {object} config - Configuration object
    * @param {object|string} [config.container=document.body] - DOM element or CSS selector
@@ -17,7 +17,7 @@ class Futz {
    */
 
   constructor(config) {
-    this.namespace = 'futz';
+    this.namespace = 'variaboard';
     this.controls = {};
     this.buttons = {};
 
@@ -35,7 +35,7 @@ class Futz {
     this.raf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
-    this.title = config.title !== undefined ? config.title : 'Futz';
+    this.title = config.title !== undefined ? config.title : 'VariaBoard';
     
     this.createDOM();
     this.listen();
@@ -192,4 +192,4 @@ class Futz {
 
 }
 
-module.exports = Futz;
+module.exports = VariaBoard;

@@ -4,7 +4,7 @@ const Calc = require('../util/calc');
 /**
  * Create a range control
  *
- * @param {object} futz - Reference to parent Futz instance
+ * @param {object} variaboard - Reference to parent VariaBoard instance
  * @param {object} config - Configuration object
  * @param {string} config.id - Unique id/slug
  * @param {string} config.title - UI display title
@@ -24,8 +24,8 @@ const Calc = require('../util/calc');
 
 class Range extends Control {
 
-  constructor(futz, config) {
-    super(futz, config);
+  constructor(variaboard, config) {
+    super(variaboard, config);
     this.type = 'range';
 
     this.min = config.min;
@@ -47,11 +47,11 @@ class Range extends Control {
 
     // range
     this.dom.range = document.createElement('div');
-    this.dom.range.classList.add(`${this.futz.namespace}-control-range`);
+    this.dom.range.classList.add(`${this.variaboard.namespace}-control-range`);
 
     // range inner
     this.dom.rangeInner = document.createElement('div');
-    this.dom.rangeInner.classList.add(`${this.futz.namespace}-control-range-inner`);
+    this.dom.rangeInner.classList.add(`${this.variaboard.namespace}-control-range-inner`);
     this.dom.range.appendChild(this.dom.rangeInner);
     
     this.dom.control.appendChild(this.dom.range);
@@ -68,9 +68,9 @@ class Range extends Control {
   }
 
   onValueMousedown(e) {
-    this.futz.mouse.down = true;
-    this.futz.mouse.anchor.x = e.clientX;
-    this.futz.mouse.anchor.y = e.clientY;
+    this.variaboard.mouse.down = true;
+    this.variaboard.mouse.anchor.x = e.clientX;
+    this.variaboard.mouse.anchor.y = e.clientY;
     this.mouseIsDown = true;
     this.setDragValue();
   }
@@ -93,7 +93,7 @@ class Range extends Control {
   setDragValue() {
     let left = this.dom.range.offsetLeft;
     let width = this.dom.range.offsetWidth;
-    let val = Calc.map(this.futz.mouse.x, left, left + width, this.min, this.max);
+    let val = Calc.map(this.variaboard.mouse.x, left, left + width, this.min, this.max);
     this.set(val);
     this.valueTarget = this.value;
   }

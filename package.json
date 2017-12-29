@@ -1,5 +1,5 @@
 {
-  "name": "futz",
+  "name": "VariaBoard",
   "author": "Jack Rugile <jack@jackrugile.com> (https://jackrugile.com)",
   "version": "0.1.0",
   "description": "",
@@ -11,16 +11,16 @@
     "parameterization",
     "gui"
   ],
-  "main": "src/js/futz.js",
+  "main": "src/js/variaboard.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jackrugile/futz.git"
+    "url": "git+https://github.com/jackrugile/variaboard.git"
   },
   "bugs": {
-    "url": "https://github.com/jackrugile/futz/issues"
+    "url": "https://github.com/jackrugile/variaboard/issues"
   },
-  "homepage": "https://github.com/jackrugile/futz.git#readme",
+  "homepage": "https://github.com/jackrugile/variaboard.git#readme",
   "devDependencies": {
     "autoprefixer": "^7.2.3",
     "babel-core": "^6.26.0",

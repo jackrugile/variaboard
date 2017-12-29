@@ -26,6 +26,12 @@
 - [ ] collapsible panels
 - [ ] tool tip descriptions
 
+- [ ] post set function for mapping to different values?
+
+- [ ] test multiple instances
+
+- [ ] find best font for small readability?
+
 - [ ] change classes to more generic names
 
 - [ ] randomize or mutate single field button

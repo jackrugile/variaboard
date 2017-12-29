@@ -1,16 +1,16 @@
-# Futz
+# VariaBoard
 
-[![Travis CI](https://img.shields.io/travis/jackrugile/futz.svg)](https://travis-ci.org/jackrugile/futz/)
-![Version](https://img.shields.io/github/package-json/v/jackrugile/futz.svg)
-[![MIT License](https://img.shields.io/github/license/jackrugile/futz.svg)](https://opensource.org/licenses/MIT)
+[![Travis CI](https://img.shields.io/travis/jackrugile/variaboard.svg)](https://travis-ci.org/jackrugile/variaboard/)
+![Version](https://img.shields.io/github/package-json/v/jackrugile/variaboard.svg)
+[![MIT License](https://img.shields.io/github/license/jackrugile/variaboard.svg)](https://opensource.org/licenses/MIT)
 
 Control panel for tweaking parameters on front end projects.
 
-- **[GitHub Repository](https://github.com/jackrugile/futz)**
-- **[Demo](https://jackrugile.github.io/futz/)**
-- **[Documentation](https://jackrugile.github.io/futz/jsdoc/)**
+- **[GitHub Repository](https://github.com/jackrugile/variaboard)**
+- **[Demo](https://jackrugile.github.io/variaboard/)**
+- **[Documentation](https://jackrugile.github.io/variaboard/jsdoc/)**
 
-[![Screenshot](https://user-images.githubusercontent.com/726153/34353443-6031dfb2-e9e5-11e7-845a-9f96de1f125c.png)](https://jackrugile.github.io/futz/)
+[![Screenshot](https://user-images.githubusercontent.com/726153/34353443-6031dfb2-e9e5-11e7-845a-9f96de1f125c.png)](https://jackrugile.github.io/variaboard/)
 
 ## Inspiration and Reference
 

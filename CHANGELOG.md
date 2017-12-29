@@ -1,6 +1,6 @@
 # Changelog
 
-A rough history of Futz.
+A rough history of VariaBoard.
 
 ## 2017-12-23 // v0.1.0
 

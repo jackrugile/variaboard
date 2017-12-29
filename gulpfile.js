@@ -42,7 +42,7 @@ gulp.task('build-css-src', () => {
       autoprefixer({browsers: ['last 1 version']})
   ];
   return gulp.src('./src/css/*.css')
-    .pipe(rename('futz.css'))
+    .pipe(rename('variaboard.css'))
     .pipe(sourcemaps.init())
     .pipe(postcss(plugins))
     .pipe(sourcemaps.write('./sourcemaps'))
@@ -55,7 +55,7 @@ gulp.task('build-css-min', () => {
       cssnano()
   ];
   return gulp.src('./src/css/*.css')
-    .pipe(rename('futz.min.css'))
+    .pipe(rename('variaboard.min.css'))
     .pipe(sourcemaps.init())
     .pipe(postcss(plugins))
     .pipe(sourcemaps.write('./sourcemaps'))
@@ -82,14 +82,14 @@ gulp.task('build-js-src', () => {
   browserify({
     entries: './src/js/index.js',
     debug: true,
-    standalone: 'Futz'
+    standalone: 'VariaBoard'
   })
   .transform('babelify', { presets: ['env'] })
   .bundle()
   .on('error', err => {
     gutil.log("Browserify Error", gutil.colors.red(err.message))
   })
-  .pipe(source('futz.js'))
+  .pipe(source('variaboard.js'))
   .pipe(buffer())
   .pipe(sourcemaps.init({ loadMaps: true }))
   .pipe(sourcemaps.write('./sourcemaps'))
@@ -100,14 +100,14 @@ gulp.task('build-js-min', () => {
   browserify({
     entries: './src/js/index.js',
     debug: true,
-    standalone: 'Futz'
+    standalone: 'VariaBoard'
   })
   .transform('babelify', { presets: ['env'] })
   .bundle()
   .on('error', err => {
     gutil.log("Browserify Error", gutil.colors.red(err.message))
   })
-  .pipe(source('futz.min.js'))
+  .pipe(source('variaboard.min.js'))
   .pipe(buffer())
   .pipe(uglify())
   .pipe(sourcemaps.init({ loadMaps: true }))

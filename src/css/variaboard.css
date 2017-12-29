@@ -15,12 +15,12 @@ canvas {
 
 /* --- */
 
-.futz-panel,
-.futz-panel * {
+.variaboard-panel,
+.variaboard-panel * {
   box-sizing: border-box;
 }
 
-.futz-panel {
+.variaboard-panel {
   background: #000;
   border-bottom: 1px solid #000;
   border-right: 1px solid #000;
@@ -38,16 +38,17 @@ canvas {
 
   -webkit-touch-callout: none;
     -webkit-user-select: none;
+     -khtml-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
 }
 
-.futz-panel:hover {
+.variaboard-panel:hover {
   opacity: 1;
 }
 
-.futz-title {
+.variaboard-title {
   background: #222;
   border-bottom: 1px solid #000;
   color: #fff;
@@ -58,30 +59,28 @@ canvas {
   padding: 0.6em 0.75em;
 }
 
-.futz-controls {
+.variaboard-controls {
 }
 
-.futz-control {
+.variaboard-control {
   background: #222;
   border-bottom: 1px solid #000;
-  display: -webkit-box;
   display: flex;
   transition: background 200ms;
 }
 
-.futz-control:hover {
+.variaboard-control:hover {
   background: #333;
   transition-duration: 0ms;
 }
 
-.futz-control:last-child {
+.variaboard-control:last-child {
   border-bottom: none; 
 }
 
-.futz-control-title {
+.variaboard-control-title {
   border-right: 1px solid #000;
-  -webkit-box-flex: 1;
-          flex: 1 1 30%;
+  flex: 1 1 30%;
   font-size: 0.7em;
   font-weight: 400;
   line-height: 1;
@@ -91,19 +90,18 @@ canvas {
   transition: color 200ms;
 }
 
-.futz-control:hover .futz-control-title {
+.variaboard-control:hover .variaboard-control-title {
   color: #fff;
   transition-duration: 0ms;
 }
 
-.futz-control-value {
+.variaboard-control-value {
   background: none;
   border: none;
   border-right: 1px solid #000;
   border-radius: 0;
   color: inherit;
-  -webkit-box-flex: 1;
-          flex: 1 1 10%;
+  flex: 1 1 10%;
   font-family: inherit;
   font-size: 0.7em;
   font-weight: 400;
@@ -114,16 +112,16 @@ canvas {
   -webkit-appearance: none;
 }
 
-.futz-control:hover .futz-control-value {
+.variaboard-control:hover .variaboard-control-value {
   color: #fff;
   transition-duration: 0ms;
 }
 
-.futz-control-value:focus {
+.variaboard-control-value:focus {
   outline: none;
 }
 
-.futz-control-button {
+.variaboard-control-button {
   background: #444;
   border: none;
   border-right: 1px solid #000;
@@ -140,35 +138,31 @@ canvas {
   -webkit-appearance: none;
 }
 
-.futz-control-button:active {
+.variaboard-control-button:active {
   background: #fff;
   color: #000;
   transition-duration: 0ms;
 }
 
-.futz-control-button:focus {
+.variaboard-control-button:focus {
   outline: none;
 }
 
-.futz-control-range {
+.variaboard-control-range {
   cursor: ew-resize;
-  -webkit-box-flex: 1;
-          flex: 1 1 60%;
+  flex: 1 1 60%;
   overflow: hidden;
 }
 
-.futz-control-range-inner {
+.variaboard-control-range-inner {
   background: #555;
   height: 101%;
-  -webkit-transform-origin: 0% 50%;
-          transform-origin: 0% 50%;
+  transform-origin: 0% 50%;
   transition: background 200ms;
   width: 100%;
 }
 
-.futz-control:hover .futz-control-range-inner {
+.variaboard-control:hover .variaboard-control-range-inner {
   background: #fff;
   transition-duration: 0ms;
 }
-
-/*# sourceMappingURL=sourcemaps/futz.css.map */

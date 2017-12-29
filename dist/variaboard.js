@@ -1,4 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Futz = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.VariaBoard = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -10,10 +10,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 var Button = function () {
-  function Button(futz, config) {
+  function Button(variaboard, config) {
     _classCallCheck(this, Button);
 
-    this.futz = futz;
+    this.variaboard = variaboard;
     this.id = config.id;
     this.title = config.title;
     this.callback = config.callback !== undefined ? config.callback : function () {};
@@ -33,16 +33,16 @@ var Button = function () {
 
       // control
       this.dom.control = document.createElement('div');
-      this.dom.control.classList.add(this.futz.namespace + '-control');
+      this.dom.control.classList.add(this.variaboard.namespace + '-control');
 
       // button
       this.dom.button = document.createElement('button');
-      this.dom.button.classList.add(this.futz.namespace + '-control-button');
+      this.dom.button.classList.add(this.variaboard.namespace + '-control-button');
       this.dom.button.textContent = this.title;
       this.dom.control.appendChild(this.dom.button);
 
       // add to control to panel
-      this.futz.dom.controls.appendChild(this.dom.control);
+      this.variaboard.dom.controls.appendChild(this.dom.control);
     }
 
     /**
@@ -89,10 +89,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 var Control = function () {
-  function Control(futz, config) {
+  function Control(variaboard, config) {
     _classCallCheck(this, Control);
 
-    this.futz = futz;
+    this.variaboard = variaboard;
     this.type = config.type;
     this.id = config.id;
     this.title = config.title;
@@ -112,21 +112,21 @@ var Control = function () {
 
       // control
       this.dom.control = document.createElement('div');
-      this.dom.control.classList.add(this.futz.namespace + '-control');
+      this.dom.control.classList.add(this.variaboard.namespace + '-control');
 
       // title
       this.dom.title = document.createElement('h3');
-      this.dom.title.classList.add(this.futz.namespace + '-control-title');
+      this.dom.title.classList.add(this.variaboard.namespace + '-control-title');
       this.dom.title.textContent = this.title;
       this.dom.control.appendChild(this.dom.title);
 
       // value
       this.dom.value = document.createElement('input');
-      this.dom.value.classList.add(this.futz.namespace + '-control-value');
+      this.dom.value.classList.add(this.variaboard.namespace + '-control-value');
       this.dom.control.appendChild(this.dom.value);
 
       // add control to panel
-      this.futz.dom.controls.appendChild(this.dom.control);
+      this.variaboard.dom.controls.appendChild(this.dom.control);
     }
   }, {
     key: 'lock',
@@ -164,7 +164,7 @@ var Calc = require('../util/calc');
 /**
  * Create a range control
  *
- * @param {object} futz - Reference to parent Futz instance
+ * @param {object} variaboard - Reference to parent VariaBoard instance
  * @param {object} config - Configuration object
  * @param {string} config.id - Unique id/slug
  * @param {string} config.title - UI display title
@@ -185,10 +185,10 @@ var Calc = require('../util/calc');
 var Range = function (_Control) {
   _inherits(Range, _Control);
 
-  function Range(futz, config) {
+  function Range(variaboard, config) {
     _classCallCheck(this, Range);
 
-    var _this = _possibleConstructorReturn(this, (Range.__proto__ || Object.getPrototypeOf(Range)).call(this, futz, config));
+    var _this = _possibleConstructorReturn(this, (Range.__proto__ || Object.getPrototypeOf(Range)).call(this, variaboard, config));
 
     _this.type = 'range';
 
@@ -214,11 +214,11 @@ var Range = function (_Control) {
 
       // range
       this.dom.range = document.createElement('div');
-      this.dom.range.classList.add(this.futz.namespace + '-control-range');
+      this.dom.range.classList.add(this.variaboard.namespace + '-control-range');
 
       // range inner
       this.dom.rangeInner = document.createElement('div');
-      this.dom.rangeInner.classList.add(this.futz.namespace + '-control-range-inner');
+      this.dom.rangeInner.classList.add(this.variaboard.namespace + '-control-range-inner');
       this.dom.range.appendChild(this.dom.rangeInner);
 
       this.dom.control.appendChild(this.dom.range);
@@ -244,9 +244,9 @@ var Range = function (_Control) {
   }, {
     key: 'onValueMousedown',
     value: function onValueMousedown(e) {
-      this.futz.mouse.down = true;
-      this.futz.mouse.anchor.x = e.clientX;
-      this.futz.mouse.anchor.y = e.clientY;
+      this.variaboard.mouse.down = true;
+      this.variaboard.mouse.anchor.x = e.clientX;
+      this.variaboard.mouse.anchor.y = e.clientY;
       this.mouseIsDown = true;
       this.setDragValue();
     }
@@ -273,7 +273,7 @@ var Range = function (_Control) {
     value: function setDragValue() {
       var left = this.dom.range.offsetLeft;
       var width = this.dom.range.offsetWidth;
-      var val = Calc.map(this.futz.mouse.x, left, left + width, this.min, this.max);
+      var val = Calc.map(this.variaboard.mouse.x, left, left + width, this.min, this.max);
       this.set(val);
       this.valueTarget = this.value;
     }
@@ -326,10 +326,10 @@ var Button = require('./button');
 var Range = require('./controls/range');
 var Calc = require('./util/calc');
 
-var Futz = function () {
+var VariaBoard = function () {
 
   /**
-   * Create a Futz control panel
+   * Create a VariaBoard control panel
    *
    * @param {object} config - Configuration object
    * @param {object|string} [config.container=document.body] - DOM element or CSS selector
@@ -340,10 +340,10 @@ var Futz = function () {
    * @requires {@link Calc}
    */
 
-  function Futz(config) {
-    _classCallCheck(this, Futz);
+  function VariaBoard(config) {
+    _classCallCheck(this, VariaBoard);
 
-    this.namespace = 'futz';
+    this.namespace = 'variaboard';
     this.controls = {};
     this.buttons = {};
 
@@ -361,7 +361,7 @@ var Futz = function () {
     this.raf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
-    this.title = config.title !== undefined ? config.title : 'Futz';
+    this.title = config.title !== undefined ? config.title : 'VariaBoard';
 
     this.createDOM();
     this.listen();
@@ -371,7 +371,7 @@ var Futz = function () {
    * Create necessary DOM elements
    */
 
-  _createClass(Futz, [{
+  _createClass(VariaBoard, [{
     key: 'createDOM',
     value: function createDOM() {
       this.dom = {};
@@ -544,10 +544,10 @@ var Futz = function () {
     }
   }]);
 
-  return Futz;
+  return VariaBoard;
 }();
 
-module.exports = Futz;
+module.exports = VariaBoard;
 
 },{"./button":1,"./controls/range":3,"./util/calc":5}],5:[function(require,module,exports){
 "use strict";
@@ -639,4 +639,4 @@ module.exports = Calc;
 },{}]},{},[4])(4)
 });
 
-//# sourceMappingURL=sourcemaps/futz.js.map
+//# sourceMappingURL=sourcemaps/variaboard.js.map
