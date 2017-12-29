@@ -6,6 +6,8 @@
 
 VariaBoard is a control interface to modify parameters in JavaScript.
 
+**Note:** *This is still in initial development and will be undergoing major changes. Do not use in production.*
+
 - **[GitHub Repository](https://github.com/jackrugile/variaboard)**
 - **[Demo](https://jackrugile.github.io/variaboard/)**
 - **[Documentation](https://jackrugile.github.io/variaboard/jsdoc/)**

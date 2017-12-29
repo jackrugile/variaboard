@@ -67,6 +67,7 @@ class Range extends Control {
     this.dom.value.addEventListener('blur', (e) => this.onValueBlur(e));
     this.dom.value.addEventListener('keydown', (e) => this.onValueKeydown(e));
     this.dom.range.addEventListener('mousedown', (e) => this.onValueMousedown(e));
+    this.dom.value.addEventListener('wheel', (e) => this.onValueMousewheel(e));
   }
 
   onValueChange(e) {
@@ -100,6 +101,17 @@ class Range extends Control {
     this.variaboard.mouse.anchor.y = e.clientY;
     this.mouseIsDown = true;
     this.setDragValue();
+  }
+
+  onValueMousewheel(e) {
+    if(this.isFocused) {
+      let change = this.step;
+      if(e.deltaY < 0) {
+        this.set(this.get() + change);
+      } else if(e.deltaY > 0) {
+        this.set(this.get() - change);
+      }
+    }
   }
 
   onWindowMouseup(e) {

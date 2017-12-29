@@ -252,6 +252,9 @@ var Range = function (_Control) {
       this.dom.range.addEventListener('mousedown', function (e) {
         return _this2.onValueMousedown(e);
       });
+      this.dom.value.addEventListener('wheel', function (e) {
+        return _this2.onValueMousewheel(e);
+      });
     }
   }, {
     key: 'onValueChange',
@@ -290,6 +293,18 @@ var Range = function (_Control) {
       this.variaboard.mouse.anchor.y = e.clientY;
       this.mouseIsDown = true;
       this.setDragValue();
+    }
+  }, {
+    key: 'onValueMousewheel',
+    value: function onValueMousewheel(e) {
+      if (this.isFocused) {
+        var change = this.step;
+        if (e.deltaY < 0) {
+          this.set(this.get() + change);
+        } else if (e.deltaY > 0) {
+          this.set(this.get() - change);
+        }
+      }
     }
   }, {
     key: 'onWindowMouseup',

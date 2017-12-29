@@ -9,7 +9,9 @@
     "settings",
     "parameters",
     "parameterization",
-    "gui"
+    "gui",
+    "variables",
+    "javascript"
   ],
   "main": "src/js/index.js",
   "license": "MIT",

@@ -18,23 +18,26 @@
 - [ ] export/import presets
 - [ ] randomize single
 - [ ] mutate single
-- [ ] randomize all
-- [ ] mutate all
+
 - [ ] lock
 - [ ] unlock
 - [ ] config history
 - [ ] collapsible panels
 - [ ] tool tip descriptions
 
-## Notes/Features
+## Completed Features
 
 - [x] animate digits when randomizing
 - [x] prevent text selection when dragging
 - [x] allow for chaining calls
 - [x] allow for multiple instances
 - [x] keyboard mappings for up/down on each input, larger change when shift key is down
+- [x] randomize all
+- [x] mutate all
+- [x] mousewheel up/down
+- [x] "changeCallback" for any control
 
----
+## Misc
 
 - [ ] post set function for mapping to different values?
 - [ ] determine what should be added to base control, and what should be added to specific control types
@@ -43,9 +46,8 @@
 - [ ] pinned, floating, or block panel options
 - [ ] store history of changes, like bfxr?
 - [ ] destroy method for controls
-- [ ] "onChange" for individual control
-- [ ] "onChange" for any control
-- [ ] mousewheel up/down
+- [ ] "changeCallback" for individual control
+
 - [ ] keyboard input on range focus
 - [ ] check for ID naming collisions
 - [ ] move styles to only js, or output style block, for simplicity of overrides
@@ -56,6 +58,7 @@
 - [ ] selection colors
 - [ ] color coding options
 - [ ] flash when randomizing or mutating
+- [ ] style indicator when focused
 - [ ] display units? (px, em, deg)?
 - [ ] output current settings, and output code to rebuild settings (definitions)
 - [ ] methods to add new controls, or load from initial contructor
@@ -65,26 +68,26 @@
 - [ ] fix issue with snapped value at end of easing?
 - [ ] is the mutate compensation working properly?
 - [ ] set custom mutation ratio
-- [ ] test inclusion from minified files and from index.js
 - [ ] when and where to include source maps?
-- [ ] only include certain files to npm/yarn packages
 - [ ] logo
+- [ ] list browser compatibility, get polyfills where needed
 
-PLUGIN TASKS
+## Non Plugin Code
+
 - [x] publish on npm
-- [ ] linting file
 - [x] changelog
-- [ ] road map
 - [x] semver releases
 - [x] yarn
-- [ ] tests?
 - [x] UMD
-- [ ] bower
 - [x] shields/badges
 - [x] travis
 - [x] editor config
+- [x] jsdoc for classes and methods
+- [x] 'use strict';
+- [ ] linting file
+- [ ] road map
+- [ ] bower
 - [ ] cdnjs
 - [ ] unpkg
 - [ ] jsdelivr
-- [x] jsdoc for methods
-- [x] 'use strict';
+- [ ] tests?
