@@ -1,7 +1,7 @@
 {
   "name": "variaboard",
   "author": "Jack Rugile <jack@jackrugile.com> (https://jackrugile.com)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "VariaBoard is a control interface to modify parameters in JavaScript.",
   "keywords": [
     "controls",
