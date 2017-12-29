@@ -1,3 +1,5 @@
+'use strict';
+
 const Button = require('./button');
 const Range = require('./controls/range');
 const Calc = require('./util/calc');
@@ -35,8 +37,10 @@ class VariaBoard {
     this.raf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
+    this.class = config.class !== undefined ? config.class : null;
     this.title = config.title !== undefined ? config.title : null;
-    
+    this.changeCallback = config.changeCallback !== undefined ? config.changeCallback : () => {};
+
     this.createDOM();
     this.listen();
   }
@@ -54,6 +58,9 @@ class VariaBoard {
     // panel
     this.dom.panel = document.createElement('div');
     this.dom.panel.classList.add(`${this.namespace}-panel`);
+    if(this.class) {
+      this.dom.panel.classList.add(this.class);
+    }
 
     // title
     if(this.title) {
@@ -79,6 +86,7 @@ class VariaBoard {
   listen() {
     window.addEventListener('mouseup', (e) => this.onWindowMouseup(e));
     window.addEventListener('mousemove', (e) => this.onWindowMousemove(e));
+    window.addEventListener('resize', () => this.onWindowResize());
   }
 
   /**
@@ -106,7 +114,22 @@ class VariaBoard {
     this.mouse.y = e.clientY;
     for(let key in this.controls) {
       let control = this.controls[key];
-      control.onWindowMousemove(e);
+      if(control) {
+        control.onWindowMousemove(e);
+      }
+    }
+  }
+
+  /**
+   * On window resize event
+   */
+
+  onWindowResize() {
+    for(let key in this.controls) {
+      let control = this.controls[key];
+      if(control) {
+        control.onWindowResize();
+      }
     }
   }
 
@@ -143,7 +166,7 @@ class VariaBoard {
 
   addButton(config) {
     this.buttons[config.id] = new Button(this, config);
-    return this.buttons[config.id];
+    return this;
   }
 
   /**
@@ -165,11 +188,14 @@ class VariaBoard {
 
   addRange(config) {
     this.controls[config.id] = new Range(this, config);
-    return this.controls[config.id];
+    return this;
   }
 
   get(id) {
-    return this.controls[id].get();
+    let control = this.controls[id];
+    if(control) {
+      return control.get();
+    }
   }
 
   randomize() {

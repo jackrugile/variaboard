@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Calculation functions and helpers
  */

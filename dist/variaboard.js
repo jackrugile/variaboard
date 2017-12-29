@@ -1,13 +1,13 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.VariaBoard = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 /**
  * Create a button
  */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Button = function () {
   function Button(variaboard, config) {
@@ -82,13 +82,13 @@ module.exports = Button;
 },{}],2:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 /**
  * Create a control
  */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Control = function () {
   function Control(variaboard, config) {
@@ -207,9 +207,11 @@ var Range = function (_Control) {
 
     _this.mouseIsDown = false;
     _this.settled = false;
+    _this.isFocused = false;
+
+    _this.onWindowResize();
 
     _this.listen();
-
     _this.set(_this.value);
     return _this;
   }
@@ -238,6 +240,15 @@ var Range = function (_Control) {
       this.dom.value.addEventListener('change', function (e) {
         return _this2.onValueChange(e);
       });
+      this.dom.value.addEventListener('focus', function (e) {
+        return _this2.onValueFocus(e);
+      });
+      this.dom.value.addEventListener('blur', function (e) {
+        return _this2.onValueBlur(e);
+      });
+      this.dom.value.addEventListener('keydown', function (e) {
+        return _this2.onValueKeydown(e);
+      });
       this.dom.range.addEventListener('mousedown', function (e) {
         return _this2.onValueMousedown(e);
       });
@@ -247,6 +258,29 @@ var Range = function (_Control) {
     value: function onValueChange(e) {
       this.set(this.dom.value.value);
       this.valueTarget = this.value;
+    }
+  }, {
+    key: 'onValueFocus',
+    value: function onValueFocus(e) {
+      this.isFocused = true;
+    }
+  }, {
+    key: 'onValueBlur',
+    value: function onValueBlur(e) {
+      this.isFocused = false;
+    }
+  }, {
+    key: 'onValueKeydown',
+    value: function onValueKeydown(e) {
+      var change = e.shiftKey ? this.step * 10 : this.step;
+      switch (e.which) {
+        case 38:
+          this.set(this.get() + change);
+          break;
+        case 40:
+          this.set(this.get() - change);
+          break;
+      }
     }
   }, {
     key: 'onValueMousedown',
@@ -270,6 +304,11 @@ var Range = function (_Control) {
       }
     }
   }, {
+    key: 'onWindowResize',
+    value: function onWindowResize() {
+      this.bcr = this.dom.range.getBoundingClientRect();
+    }
+  }, {
     key: 'randomize',
     value: function randomize() {
       this.settled = false;
@@ -285,10 +324,7 @@ var Range = function (_Control) {
   }, {
     key: 'setDragValue',
     value: function setDragValue() {
-      var left = this.dom.range.offsetLeft;
-      var width = this.dom.range.offsetWidth;
-      var val = Calc.map(this.variaboard.mouse.x, left, left + width, this.min, this.max);
-      this.set(val);
+      this.set(Calc.map(this.variaboard.mouse.x, this.bcr.left, this.bcr.right, this.min, this.max));
       this.valueTarget = this.value;
     }
   }, {
@@ -321,6 +357,8 @@ var Range = function (_Control) {
 
       // set the title attribute for the control
       this.dom.control.setAttribute('title', this.title + ': ' + this.value.toFixed(this.places));
+
+      this.variaboard.changeCallback.call(this.variaboard);
     }
   }]);
 
@@ -375,7 +413,9 @@ var VariaBoard = function () {
     this.raf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
+    this.class = config.class !== undefined ? config.class : null;
     this.title = config.title !== undefined ? config.title : null;
+    this.changeCallback = config.changeCallback !== undefined ? config.changeCallback : function () {};
 
     this.createDOM();
     this.listen();
@@ -396,6 +436,9 @@ var VariaBoard = function () {
       // panel
       this.dom.panel = document.createElement('div');
       this.dom.panel.classList.add(this.namespace + '-panel');
+      if (this.class) {
+        this.dom.panel.classList.add(this.class);
+      }
 
       // title
       if (this.title) {
@@ -429,6 +472,9 @@ var VariaBoard = function () {
       window.addEventListener('mousemove', function (e) {
         return _this.onWindowMousemove(e);
       });
+      window.addEventListener('resize', function () {
+        return _this.onWindowResize();
+      });
     }
 
     /**
@@ -460,7 +506,24 @@ var VariaBoard = function () {
       this.mouse.y = e.clientY;
       for (var key in this.controls) {
         var control = this.controls[key];
-        control.onWindowMousemove(e);
+        if (control) {
+          control.onWindowMousemove(e);
+        }
+      }
+    }
+
+    /**
+     * On window resize event
+     */
+
+  }, {
+    key: 'onWindowResize',
+    value: function onWindowResize() {
+      for (var key in this.controls) {
+        var control = this.controls[key];
+        if (control) {
+          control.onWindowResize();
+        }
       }
     }
 
@@ -505,7 +568,7 @@ var VariaBoard = function () {
     key: 'addButton',
     value: function addButton(config) {
       this.buttons[config.id] = new Button(this, config);
-      return this.buttons[config.id];
+      return this;
     }
 
     /**
@@ -529,12 +592,15 @@ var VariaBoard = function () {
     key: 'addRange',
     value: function addRange(config) {
       this.controls[config.id] = new Range(this, config);
-      return this.controls[config.id];
+      return this;
     }
   }, {
     key: 'get',
     value: function get(id) {
-      return this.controls[id].get();
+      var control = this.controls[id];
+      if (control) {
+        return control.get();
+      }
     }
   }, {
     key: 'randomize',
@@ -562,15 +628,15 @@ var VariaBoard = function () {
 module.exports = VariaBoard;
 
 },{"./button":1,"./controls/range":3,"./util/calc":5}],5:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+'use strict';
 
 /**
  * Calculation functions and helpers
  */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Calc = function () {
   function Calc() {
@@ -578,7 +644,7 @@ var Calc = function () {
   }
 
   _createClass(Calc, null, [{
-    key: "rand",
+    key: 'rand',
 
 
     /**
@@ -627,17 +693,17 @@ var Calc = function () {
     */
 
   }, {
-    key: "clamp",
+    key: 'clamp',
     value: function clamp(val, min, max) {
       return Math.max(Math.min(val, max), min);
     }
   }, {
-    key: "map",
+    key: 'map',
     value: function map(val, inMin, inMax, outMin, outMax) {
       return (outMax - outMin) * ((val - inMin) / (inMax - inMin)) + outMin;
     }
   }, {
-    key: "roundToNearestInterval",
+    key: 'roundToNearestInterval',
     value: function roundToNearestInterval(value, interval) {
       return Math.round(value / interval) * interval;
     }

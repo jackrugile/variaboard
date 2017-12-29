@@ -14,7 +14,9 @@
     <script src="./js/variaboard.min.js"></script>
     <script>
       let varia = new VariaBoard({
-        container: document.body
+        container: document.body,
+        title: 'VariaBoard 1',
+        changeCallback: function() {}
       });
 
       varia.addRange({
@@ -191,6 +193,27 @@
       }
 
       loop();
+
+      let varia2 = new VariaBoard({
+        container: document.body,
+        class: 'vb2',
+        title: 'VariaBoard 2',
+        changeCallback: function() {
+          document.querySelector('canvas').style.transform = `scale(${this.get('scale')})`;
+        }
+      });
+
+      varia2.addRange({
+        id: 'scale',
+        title: 'Scale',
+        min: 0.1,
+        max: 4,
+        step: 0.01,
+        default: 1,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
     </script>
   </body>
 </html>

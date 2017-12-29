@@ -22,8 +22,7 @@ canvas {
 
 .variaboard-panel {
   background: #000;
-  border-bottom: 1px solid #000;
-  border-right: 1px solid #000;
+  box-shadow: 0 0 0 1px #000;
   color: #fff;
   font-family: source code pro, monospace;
   font-size: 16px;
@@ -165,4 +164,11 @@ canvas {
 .variaboard-control:hover .variaboard-control-range-inner {
   background: #fff;
   transition-duration: 0ms;
+}
+
+/* --- */
+
+.variaboard-panel.vb2 {
+  left: auto;
+  right: 0;
 }

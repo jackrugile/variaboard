@@ -1,3 +1,5 @@
+'use strict';
+
 const Control = require('./control');
 const Calc = require('../util/calc');
 
@@ -36,9 +38,11 @@ class Range extends Control {
 
     this.mouseIsDown = false;
     this.settled = false;
+    this.isFocused = false;
+
+    this.onWindowResize();
 
     this.listen();
-
     this.set(this.value);
   }
 
@@ -59,12 +63,35 @@ class Range extends Control {
 
   listen() {
     this.dom.value.addEventListener('change', (e) => this.onValueChange(e));
+    this.dom.value.addEventListener('focus', (e) => this.onValueFocus(e));
+    this.dom.value.addEventListener('blur', (e) => this.onValueBlur(e));
+    this.dom.value.addEventListener('keydown', (e) => this.onValueKeydown(e));
     this.dom.range.addEventListener('mousedown', (e) => this.onValueMousedown(e));
   }
 
   onValueChange(e) {
     this.set(this.dom.value.value);
     this.valueTarget = this.value;
+  }
+
+  onValueFocus(e) {
+    this.isFocused = true;
+  }
+
+  onValueBlur(e) {
+    this.isFocused = false;
+  }
+
+  onValueKeydown(e) {
+    let change = e.shiftKey ? this.step * 10 : this.step;
+    switch(e.which) {
+      case 38:
+        this.set(this.get() + change);
+        break;
+      case 40:
+        this.set(this.get() - change);
+        break;
+    }
   }
 
   onValueMousedown(e) {
@@ -85,6 +112,10 @@ class Range extends Control {
     }
   }
 
+  onWindowResize() {
+    this.bcr = this.dom.range.getBoundingClientRect();
+  }
+
   randomize() {
     this.settled = false;
     this.valueTarget = Calc.rand(this.min, this.max);
@@ -97,10 +128,7 @@ class Range extends Control {
   }
 
   setDragValue() {
-    let left = this.dom.range.offsetLeft;
-    let width = this.dom.range.offsetWidth;
-    let val = Calc.map(this.variaboard.mouse.x, left, left + width, this.min, this.max);
-    this.set(val);
+    this.set(Calc.map(this.variaboard.mouse.x, this.bcr.left, this.bcr.right, this.min, this.max));
     this.valueTarget = this.value;
   }
 
@@ -111,7 +139,7 @@ class Range extends Control {
     } else {
       this.settled = true;
       this.value = this.valueTarget;
-      this.set(this.value); 
+      this.set(this.value);
     }
   }
 
@@ -131,6 +159,8 @@ class Range extends Control {
     
     // set the title attribute for the control
     this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}`);
+
+    this.variaboard.changeCallback.call(this.variaboard);
   }
 
 }
