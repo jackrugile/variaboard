@@ -47,7 +47,6 @@
 - [ ] "onChange" for any control
 - [ ] mousewheel up/down
 - [ ] keyboard input on range focus
-- [ ] full logging system
 - [ ] check for ID naming collisions
 - [ ] move styles to only js, or output style block, for simplicity of overrides
 - [ ] able to type in numbers?
@@ -83,7 +82,7 @@ PLUGIN TASKS
 - [ ] bower
 - [x] shields/badges
 - [x] travis
-- [ ] editor config
+- [x] editor config
 - [ ] cdnjs
 - [ ] unpkg
 - [ ] jsdelivr

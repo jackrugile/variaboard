@@ -57,7 +57,7 @@ class Range extends Control {
     this.dom.rangeInner = document.createElement('div');
     this.dom.rangeInner.classList.add(`${this.variaboard.namespace}-control-range-inner`);
     this.dom.range.appendChild(this.dom.rangeInner);
-    
+
     this.dom.control.appendChild(this.dom.range);
   }
 
@@ -150,13 +150,13 @@ class Range extends Control {
     val = Calc.clamp(val, this.min, this.max);
     val = bypassRounding ? val : Calc.roundToNearestInterval(val, this.step);
     this.value = val;
-    
+
     // set input value
     this.dom.value.value = this.value.toFixed(this.places);
-    
+
     // set range value
     this.dom.rangeInner.style.transform = `scaleX(${Calc.map(this.value, this.min, this.max, 0, 1)})`;
-    
+
     // set the title attribute for the control
     this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}`);
 
