@@ -33,13 +33,31 @@ canvas {
   transition: opacity 200ms;
   width: 100%;
   z-index: 99;
+}
 
+.variaboard-panel.variaboard-is-dragging {
   -webkit-touch-callout: none;
-    -webkit-user-select: none;
-     -khtml-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+}
+
+.variaboard-title::selection,
+.variaboard-control-title::selection,
+.variaboard-control-value::selection,
+.variaboard-button::selection {
+  background: #fff;
+  color: #000;
+}
+
+.variaboard-title::-moz-selection,
+.variaboard-control-title::-moz-selection,
+.variaboard-control-value::-moz-selection,
+.variaboard-button::-moz-selection {
+  background: #fff;
+  color: #000;
 }
 
 .variaboard-title {
@@ -94,6 +112,7 @@ canvas {
   border: none;
   border-right: 1px solid #000;
   border-radius: 0;
+  box-shadow: inset 0 0 0 1px transparent;
   color: inherit;
   flex: 1 1 20%;
   font-family: inherit;
@@ -102,7 +121,7 @@ canvas {
   line-height: 1;
   margin: 0;
   padding: 0.6em 0.75em;
-  transition: color 200ms;
+  transition: color 200ms, box-shadow 200ms;
   width: 100%;
   -webkit-appearance: none;
 }
@@ -113,10 +132,12 @@ canvas {
 }
 
 .variaboard-control-value:focus {
+  box-shadow: inset 0 0 0 1px #fff;
   outline: none;
+  transition-duration: 0ms;
 }
 
-.variaboard-control-button {
+.variaboard-button {
   background: #444;
   border: none;
   border-right: 1px solid #000;
@@ -133,13 +154,13 @@ canvas {
   -webkit-appearance: none;
 }
 
-.variaboard-control-button:active {
+.variaboard-button:active {
   background: #fff;
   color: #000;
   transition-duration: 0ms;
 }
 
-.variaboard-control-button:focus {
+.variaboard-button:focus {
   outline: none;
 }
 

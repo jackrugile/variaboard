@@ -38,7 +38,7 @@ var Button = function () {
 
       // button
       this.dom.button = document.createElement('button');
-      this.dom.button.classList.add(this.variaboard.namespace + '-control-button');
+      this.dom.button.classList.add(this.variaboard.namespace + '-button');
       this.dom.button.textContent = this.title;
       this.dom.control.setAttribute('title', this.title + ': ' + this.description);
       this.dom.control.appendChild(this.dom.button);
@@ -117,14 +117,16 @@ var Control = function () {
       this.dom.control.classList.add(this.variaboard.namespace + '-control');
 
       // title
-      this.dom.title = document.createElement('h3');
+      this.dom.title = document.createElement('label');
       this.dom.title.classList.add(this.variaboard.namespace + '-control-title');
       this.dom.title.textContent = this.title;
+      this.dom.title.setAttribute('for', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
       this.dom.control.appendChild(this.dom.title);
 
       // value
       this.dom.value = document.createElement('input');
       this.dom.value.classList.add(this.variaboard.namespace + '-control-value');
+      this.dom.value.setAttribute('id', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
       this.dom.control.appendChild(this.dom.value);
 
       // add control to panel
@@ -205,7 +207,7 @@ var Range = function (_Control) {
     _this.places = _this.step.toString().indexOf('.') > -1 ? _this.step.toString().split('.')[1].length : 0;
     _this.valueTarget = _this.value;
 
-    _this.mouseIsDown = false;
+    _this.isMouseDown = false;
     _this.settled = false;
     _this.isFocused = false;
 
@@ -288,10 +290,11 @@ var Range = function (_Control) {
   }, {
     key: 'onValueMousedown',
     value: function onValueMousedown(e) {
+      this.variaboard.onDragStart();
       this.variaboard.mouse.down = true;
       this.variaboard.mouse.anchor.x = e.clientX;
       this.variaboard.mouse.anchor.y = e.clientY;
-      this.mouseIsDown = true;
+      this.isMouseDown = true;
       this.setDragValue();
     }
   }, {
@@ -309,12 +312,13 @@ var Range = function (_Control) {
   }, {
     key: 'onWindowMouseup',
     value: function onWindowMouseup(e) {
-      this.mouseIsDown = false;
+      this.variaboard.onDragEnd();
+      this.isMouseDown = false;
     }
   }, {
     key: 'onWindowMousemove',
     value: function onWindowMousemove(e) {
-      if (this.mouseIsDown) {
+      if (this.isMouseDown) {
         this.setDragValue();
       }
     }
@@ -411,6 +415,7 @@ var VariaBoard = function () {
     _classCallCheck(this, VariaBoard);
 
     this.namespace = 'variaboard';
+    this.id = Math.random().toString(36).substr(2, 8);
     this.controls = {};
     this.buttons = {};
 
@@ -426,6 +431,7 @@ var VariaBoard = function () {
 
     this.needsUpdate = false;
     this.raf = null;
+    this.isDragging = false;
 
     this.container = config.container !== undefined ? config.container : document.body;
     this.class = config.class !== undefined ? config.class : null;
@@ -540,6 +546,18 @@ var VariaBoard = function () {
           control.onWindowResize();
         }
       }
+    }
+  }, {
+    key: 'onDragStart',
+    value: function onDragStart() {
+      this.isDragging = true;
+      this.dom.panel.classList.add(this.namespace + '-is-dragging');
+    }
+  }, {
+    key: 'onDragEnd',
+    value: function onDragEnd() {
+      this.isDragging = false;
+      this.dom.panel.classList.remove(this.namespace + '-is-dragging');
     }
 
     /**

@@ -20,6 +20,7 @@ class VariaBoard {
 
   constructor(config) {
     this.namespace = 'variaboard';
+    this.id = Math.random().toString(36).substr(2, 8);
     this.controls = {};
     this.buttons = {};
 
@@ -35,6 +36,7 @@ class VariaBoard {
 
     this.needsUpdate = false;
     this.raf = null;
+    this.isDragging = false;
 
     this.container = config.container !== undefined ? config.container : document.body;
     this.class = config.class !== undefined ? config.class : null;
@@ -131,6 +133,16 @@ class VariaBoard {
         control.onWindowResize();
       }
     }
+  }
+
+  onDragStart() {
+    this.isDragging = true;
+    this.dom.panel.classList.add(`${this.namespace}-is-dragging`);
+  }
+
+  onDragEnd() {
+    this.isDragging = false;
+    this.dom.panel.classList.remove(`${this.namespace}-is-dragging`);
   }
 
   /**

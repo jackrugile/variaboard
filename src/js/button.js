@@ -30,7 +30,7 @@ class Button {
 
     // button
     this.dom.button = document.createElement('button');
-    this.dom.button.classList.add(`${this.variaboard.namespace}-control-button`);
+    this.dom.button.classList.add(`${this.variaboard.namespace}-button`);
     this.dom.button.textContent = this.title;
     this.dom.control.setAttribute('title', `${this.title}: ${this.description}`);
     this.dom.control.appendChild(this.dom.button);

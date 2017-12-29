@@ -36,7 +36,7 @@ class Range extends Control {
     this.places = this.step.toString().indexOf('.') > -1 ? this.step.toString().split('.')[1].length : 0;
     this.valueTarget = this.value;
 
-    this.mouseIsDown = false;
+    this.isMouseDown = false;
     this.settled = false;
     this.isFocused = false;
 
@@ -96,10 +96,11 @@ class Range extends Control {
   }
 
   onValueMousedown(e) {
+    this.variaboard.onDragStart();
     this.variaboard.mouse.down = true;
     this.variaboard.mouse.anchor.x = e.clientX;
     this.variaboard.mouse.anchor.y = e.clientY;
-    this.mouseIsDown = true;
+    this.isMouseDown = true;
     this.setDragValue();
   }
 
@@ -115,11 +116,12 @@ class Range extends Control {
   }
 
   onWindowMouseup(e) {
-    this.mouseIsDown = false;
+    this.variaboard.onDragEnd();
+    this.isMouseDown = false;
   }
 
   onWindowMousemove(e) {
-    if(this.mouseIsDown) {
+    if(this.isMouseDown) {
       this.setDragValue();
     }
   }

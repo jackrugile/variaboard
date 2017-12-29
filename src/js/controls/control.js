@@ -28,14 +28,16 @@ class Control {
     this.dom.control.classList.add(`${this.variaboard.namespace}-control`);
 
     // title
-    this.dom.title = document.createElement('h3');
+    this.dom.title = document.createElement('label');
     this.dom.title.classList.add(`${this.variaboard.namespace}-control-title`);
     this.dom.title.textContent = this.title;
+    this.dom.title.setAttribute('for', `${this.variaboard.namespace}-${this.id}-${this.variaboard.id}`);
     this.dom.control.appendChild(this.dom.title);
 
     // value
     this.dom.value = document.createElement('input');
     this.dom.value.classList.add(`${this.variaboard.namespace}-control-value`);
+    this.dom.value.setAttribute('id', `${this.variaboard.namespace}-${this.id}-${this.variaboard.id}`);
     this.dom.control.appendChild(this.dom.value);
 
     // add control to panel

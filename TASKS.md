@@ -2,8 +2,8 @@
 
 ## Controls
 
-- [ ] button
-- [ ] range
+- [x] button
+- [x] range
 - [ ] minMax range
 - [ ] number
 - [ ] boolean
@@ -18,7 +18,6 @@
 - [ ] export/import presets
 - [ ] randomize single
 - [ ] mutate single
-
 - [ ] lock
 - [ ] unlock
 - [ ] config history
@@ -35,29 +34,28 @@
 - [x] randomize all
 - [x] mutate all
 - [x] mousewheel up/down
-- [x] "changeCallback" for any control
+- [x] "changeCallback" for any/all control
+- [x] selection colors
+- [x] set decimal count to amount of step, so that it never jumps
+- [x] able to type in numbers
 
 ## Misc
 
 - [ ] post set function for mapping to different values?
 - [ ] determine what should be added to base control, and what should be added to specific control types
-- [ ] change classes to more generic names
 - [ ] randomize or mutate single field button
 - [ ] pinned, floating, or block panel options
 - [ ] store history of changes, like bfxr?
-- [ ] destroy method for controls
+- [ ] destroy/update method for controls
 - [ ] "changeCallback" for individual control
-
+- [ ] exponential/function based values ranges?
 - [ ] keyboard input on range focus
 - [ ] check for ID naming collisions
 - [ ] move styles to only js, or output style block, for simplicity of overrides
-- [ ] able to type in numbers?
 - [ ] pin locations
 - [ ] preset themes
-- [ ] set decimal count to amount of step, so that it never jumps
-- [ ] selection colors
 - [ ] color coding options
-- [ ] flash when randomizing or mutating
+- [ ] flash when randomizing or mutating (only on corresponding buttons, not entire control row)
 - [ ] style indicator when focused
 - [ ] display units? (px, em, deg)?
 - [ ] output current settings, and output code to rebuild settings (definitions)
@@ -66,11 +64,15 @@
 - [ ] set mutate and randomize methods to the control itself
 - [ ] custom easing for randomize and mutate, combine map and ease
 - [ ] fix issue with snapped value at end of easing?
-- [ ] is the mutate compensation working properly?
 - [ ] set custom mutation ratio
-- [ ] when and where to include source maps?
 - [ ] logo
 - [ ] list browser compatibility, get polyfills where needed
+- [ ] look in to accessibility concerns
+- [ ] can this work for touch?
+- [ ] rethink style details
+- [ ] complete all JSDoc docs
+- [ ] provide common demos and examples
+- [ ] add getting started and more helpful basic docs
 
 ## Non Plugin Code
 
