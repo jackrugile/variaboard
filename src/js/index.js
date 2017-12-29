@@ -137,10 +137,13 @@ class VariaBoard {
    * @param {object} config.id - ID slug
    * @param {object} config.title - Title text
    * @param {object} [config.callback=() => {}] - Callback function for button press
+   *
+   * @returns {object} Button object
    */
 
   addButton(config) {
     this.buttons[config.id] = new Button(this, config);
+    return this.buttons[config.id];
   }
 
   /**
@@ -156,15 +159,17 @@ class VariaBoard {
    * @param {boolean} config.randomizable - Can be randomized individually and by randomizing all
    * @param {boolean} config.mutable - Can be mutated individually and by mutating all
    * @param {boolean} config.locked - Temporarily toggle whether the control is affected by randomization and mutation
+   *
+   * @returns {object} Range object
    */
 
   addRange(config) {
-    let control = new Range(this, config);
-    this.controls[control.id] = control;
+    this.controls[config.id] = new Range(this, config);
+    return this.controls[config.id];
   }
 
   get(id) {
-    return this.controls[id].value;
+    return this.controls[id].get();
   }
 
   randomize() {
@@ -177,19 +182,10 @@ class VariaBoard {
 
   mutate() {
     for(let key in this.controls) {
-      let control = this.controls[key];
-      let size = (control.max - control.min) / 15;
-      control.settled = false;
-      if(control.value <= control.min) {
-        control.valueTarget = Calc.rand(control.step, control.min + size);
-      } else if(control.value >= control.max) {
-        control.valueTarget = Calc.rand(control.max - size, control.max - control.step);
-      } else {
-        control.valueTarget = control.value + Calc.rand(-size, size);
-      }
-      cancelAnimationFrame(this.raf);
-      this.update();
+      this.controls[key].mutate();
     }
+    cancelAnimationFrame(this.raf);
+    this.update();
   }
 
 }

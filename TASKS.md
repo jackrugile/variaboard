@@ -86,6 +86,8 @@
 
 - [ ] is the mutate compensation working properly?
 
+- [ ] set custom mutation ratio
+
 - [ ] keyboard mappings for up/down on each input
 
 - [ ] test inclusion from minified files and from index.js

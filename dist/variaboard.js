@@ -16,6 +16,7 @@ var Button = function () {
     this.variaboard = variaboard;
     this.id = config.id;
     this.title = config.title;
+    this.description = config.description;
     this.callback = config.callback !== undefined ? config.callback : function () {};
 
     this.createDOM();
@@ -39,6 +40,7 @@ var Button = function () {
       this.dom.button = document.createElement('button');
       this.dom.button.classList.add(this.variaboard.namespace + '-control-button');
       this.dom.button.textContent = this.title;
+      this.dom.control.setAttribute('title', this.title + ': ' + this.description);
       this.dom.control.appendChild(this.dom.button);
 
       // add to control to panel
@@ -127,6 +129,11 @@ var Control = function () {
 
       // add control to panel
       this.variaboard.dom.controls.appendChild(this.dom.control);
+    }
+  }, {
+    key: 'get',
+    value: function get() {
+      return this.value;
     }
   }, {
     key: 'lock',
@@ -267,6 +274,13 @@ var Range = function (_Control) {
     value: function randomize() {
       this.settled = false;
       this.valueTarget = Calc.rand(this.min, this.max);
+    }
+  }, {
+    key: 'mutate',
+    value: function mutate() {
+      var size = (this.max - this.min) / 15;
+      this.settled = false;
+      this.valueTarget = this.get() + Calc.rand(-size, size);
     }
   }, {
     key: 'setDragValue',
@@ -483,12 +497,15 @@ var VariaBoard = function () {
      * @param {object} config.id - ID slug
      * @param {object} config.title - Title text
      * @param {object} [config.callback=() => {}] - Callback function for button press
+     *
+     * @returns {object} Button object
      */
 
   }, {
     key: 'addButton',
     value: function addButton(config) {
       this.buttons[config.id] = new Button(this, config);
+      return this.buttons[config.id];
     }
 
     /**
@@ -504,18 +521,20 @@ var VariaBoard = function () {
      * @param {boolean} config.randomizable - Can be randomized individually and by randomizing all
      * @param {boolean} config.mutable - Can be mutated individually and by mutating all
      * @param {boolean} config.locked - Temporarily toggle whether the control is affected by randomization and mutation
+     *
+     * @returns {object} Range object
      */
 
   }, {
     key: 'addRange',
     value: function addRange(config) {
-      var control = new Range(this, config);
-      this.controls[control.id] = control;
+      this.controls[config.id] = new Range(this, config);
+      return this.controls[config.id];
     }
   }, {
     key: 'get',
     value: function get(id) {
-      return this.controls[id].value;
+      return this.controls[id].get();
     }
   }, {
     key: 'randomize',
@@ -530,19 +549,10 @@ var VariaBoard = function () {
     key: 'mutate',
     value: function mutate() {
       for (var key in this.controls) {
-        var control = this.controls[key];
-        var size = (control.max - control.min) / 15;
-        control.settled = false;
-        if (control.value <= control.min) {
-          control.valueTarget = Calc.rand(control.step, control.min + size);
-        } else if (control.value >= control.max) {
-          control.valueTarget = Calc.rand(control.max - size, control.max - control.step);
-        } else {
-          control.valueTarget = control.value + Calc.rand(-size, size);
-        }
-        cancelAnimationFrame(this.raf);
-        this.update();
+        this.controls[key].mutate();
       }
+      cancelAnimationFrame(this.raf);
+      this.update();
     }
   }]);
 

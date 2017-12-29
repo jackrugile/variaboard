@@ -23,7 +23,7 @@
         min: 0,
         max: 400,
         step: 0.5,
-        default: 17,
+        default: 40,
         randomizable: true,
         mutable: true,
         locked: false
@@ -35,7 +35,7 @@
         min: 0,
         max: 300,
         step: 0.5,
-        default: 47,
+        default: 40,
         randomizable: true,
         mutable: true,
         locked: false
@@ -115,7 +115,8 @@
 
       varia.addButton({
         id: 'randomize',
-        title: 'Randomize All',
+        title: 'Randomize',
+        description: 'Set all controls to a random value',
         callback: () => {
           varia.randomize();
         }
@@ -123,7 +124,8 @@
 
       varia.addButton({
         id: 'mutate',
-        title: 'Mutate All',
+        title: 'Mutate',
+        description: 'Change the value of all controls slightly',
         callback: () => {
           varia.mutate();
         }
@@ -143,49 +145,49 @@
 
       function loop() {
         requestAnimationFrame(loop);
-        
+
         ctx.globalCompositeOperation = 'source-over';
         ctx.fillStyle = '#000'
         ctx.fillRect(0, 0, w, h);
-        
+
         ctx.globalCompositeOperation = 'lighter';
-        
+
         ctx.save();
           ctx.translate(w * 0.25, h / 2);
           ctx.rotate(varia.get('rotation') / 360 * Math.PI * 2);
           ctx.fillStyle = `hsla(${varia.get('hue') - 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
           ctx.fillRect(varia.get('width') / -2, varia.get('height') / -2, varia.get('width'), varia.get('height'));
         ctx.restore();
-        
+
         ctx.save();
           ctx.translate(w / 2, h / 2);
           ctx.rotate(varia.get('rotation') / 360 * Math.PI * 2);
           ctx.fillStyle = `hsla(${varia.get('hue')}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
           ctx.fillRect(varia.get('width') / -2, varia.get('height') / -2, varia.get('width'), varia.get('height'));
         ctx.restore();
-        
+
         ctx.save();
           ctx.translate(w * 0.75, h / 2);
           ctx.rotate(varia.get('rotation') / 360 * Math.PI * 2);
           ctx.fillStyle = `hsla(${varia.get('hue') + 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
           ctx.fillRect(varia.get('width') / -2, varia.get('height') / -2, varia.get('width'), varia.get('height'));
         ctx.restore();
-        
+
         ctx.beginPath();
         ctx.fillStyle = `hsla(${varia.get('hue') + 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
         ctx.arc(w * 0.25, h / 2, varia.get('radius'), 0, Math.PI * 2);
         ctx.fill();
-        
+
         ctx.beginPath();
         ctx.fillStyle = `hsla(${varia.get('hue') + 180}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
         ctx.arc(w / 2, h / 2, varia.get('radius'), 0, Math.PI * 2);
         ctx.fill();
-        
+
         ctx.beginPath();
         ctx.fillStyle = `hsla(${varia.get('hue') - 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
         ctx.arc(w * 0.75, h / 2, varia.get('radius'), 0, Math.PI * 2);
         ctx.fill();
-        
+
       }
 
       loop();

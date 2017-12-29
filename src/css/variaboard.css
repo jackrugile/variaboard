@@ -28,7 +28,7 @@ canvas {
   font-family: source code pro, monospace;
   font-size: 16px;
   left: 0;
-  max-width: 500px;
+  max-width: 400px;
   position: fixed;
   top: 0;
   transition: opacity 200ms;
@@ -75,7 +75,7 @@ canvas {
 
 .variaboard-control-title {
   border-right: 1px solid #000;
-  flex: 1 1 30%;
+  flex: 1 1 35%;
   font-size: 0.8em;
   font-weight: 400;
   line-height: 1;
@@ -96,7 +96,7 @@ canvas {
   border-right: 1px solid #000;
   border-radius: 0;
   color: inherit;
-  flex: 1 1 10%;
+  flex: 1 1 20%;
   font-family: inherit;
   font-size: 0.8em;
   font-weight: 400;
@@ -104,6 +104,7 @@ canvas {
   margin: 0;
   padding: 0.6em 0.75em;
   transition: color 200ms;
+  width: 100%;
   -webkit-appearance: none;
 }
 
@@ -145,7 +146,7 @@ canvas {
 
 .variaboard-control-range {
   cursor: ew-resize;
-  flex: 1 1 60%;
+  flex: 1 1 45%;
   overflow: hidden;
 }
 

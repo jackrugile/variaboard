@@ -90,6 +90,12 @@ class Range extends Control {
     this.valueTarget = Calc.rand(this.min, this.max);
   }
 
+  mutate() {
+    let size = (this.max - this.min) / 15;
+    this.settled = false;
+    this.valueTarget = this.get() + Calc.rand(-size, size);
+  }
+
   setDragValue() {
     let left = this.dom.range.offsetLeft;
     let width = this.dom.range.offsetWidth;
