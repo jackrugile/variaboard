@@ -43,9 +43,9 @@ gulp.task('build-css-src', () => {
   ];
   return gulp.src('./src/css/*.css')
     .pipe(rename('variaboard.css'))
-    .pipe(sourcemaps.init())
+    //.pipe(sourcemaps.init())
     .pipe(postcss(plugins))
-    .pipe(sourcemaps.write('./sourcemaps'))
+    //.pipe(sourcemaps.write('./sourcemaps'))
     .pipe(gulp.dest('./dist'));
 });
 
@@ -58,8 +58,8 @@ gulp.task('build-css-min', () => {
     .pipe(rename('variaboard.min.css'))
     .pipe(sourcemaps.init())
     .pipe(postcss(plugins))
-    .pipe(sourcemaps.write('./sourcemaps'))
     .pipe(gulp.dest('./dist'))
+    .pipe(sourcemaps.write('./sourcemaps'))
     .pipe(gulp.dest('./docs/css'));
 });
 
@@ -81,7 +81,7 @@ gulp.task('clean-dist-js', () => {
 gulp.task('build-js-src', () => {
   browserify({
     entries: './src/js/index.js',
-    debug: true,
+    debug: false,
     standalone: 'VariaBoard'
   })
   .transform('babelify', { presets: ['env'] })
@@ -91,15 +91,15 @@ gulp.task('build-js-src', () => {
   })
   .pipe(source('variaboard.js'))
   .pipe(buffer())
-  .pipe(sourcemaps.init({ loadMaps: true }))
-  .pipe(sourcemaps.write('./sourcemaps'))
+  //.pipe(sourcemaps.init({ loadMaps: true }))
+  //.pipe(sourcemaps.write('./sourcemaps'))
   .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('build-js-min', () => {
   browserify({
     entries: './src/js/index.js',
-    debug: true,
+    debug: false,
     standalone: 'VariaBoard'
   })
   .transform('babelify', { presets: ['env'] })
@@ -110,9 +110,9 @@ gulp.task('build-js-min', () => {
   .pipe(source('variaboard.min.js'))
   .pipe(buffer())
   .pipe(uglify())
+  .pipe(gulp.dest('./dist'))
   .pipe(sourcemaps.init({ loadMaps: true }))
   .pipe(sourcemaps.write('./sourcemaps'))
-  .pipe(gulp.dest('./dist'))
   .pipe(gulp.dest('./docs/js'));
 });
 

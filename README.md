@@ -4,7 +4,7 @@
 ![Version](https://img.shields.io/github/package-json/v/jackrugile/variaboard.svg)
 [![MIT License](https://img.shields.io/github/license/jackrugile/variaboard.svg)](https://opensource.org/licenses/MIT)
 
-Control panel for tweaking parameters on front end projects.
+VariaBoard is a control interface to modify parameters in JavaScript.
 
 - **[GitHub Repository](https://github.com/jackrugile/variaboard)**
 - **[Demo](https://jackrugile.github.io/variaboard/)**

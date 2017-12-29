@@ -650,5 +650,3 @@ module.exports = Calc;
 
 },{}]},{},[4])(4)
 });
-
-//# sourceMappingURL=sourcemaps/variaboard.js.map

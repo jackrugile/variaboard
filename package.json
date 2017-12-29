@@ -2,7 +2,7 @@
   "name": "variaboard",
   "author": "Jack Rugile <jack@jackrugile.com> (https://jackrugile.com)",
   "version": "0.1.0",
-  "description": "",
+  "description": "VariaBoard is a control interface to modify parameters in JavaScript.",
   "keywords": [
     "controls",
     "control panel",
@@ -11,7 +11,7 @@
     "parameterization",
     "gui"
   ],
-  "main": "src/js/variaboard.js",
+  "main": "dist/variaboard.js",
   "license": "MIT",
   "repository": {
     "type": "git",
