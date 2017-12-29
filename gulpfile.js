@@ -39,20 +39,18 @@ gulp.task('clean-dist-css', () => {
 
 gulp.task('build-css-src', () => {
   let plugins = [
-      autoprefixer({browsers: ['last 1 version']})
+    autoprefixer({browsers: ['last 1 version']})
   ];
   return gulp.src('./src/css/*.css')
     .pipe(rename('variaboard.css'))
-    //.pipe(sourcemaps.init())
     .pipe(postcss(plugins))
-    //.pipe(sourcemaps.write('./sourcemaps'))
     .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('build-css-min', () => {
   let plugins = [
-      autoprefixer({browsers: ['last 1 version']}),
-      cssnano()
+    autoprefixer({browsers: ['last 1 version']}),
+    cssnano()
   ];
   return gulp.src('./src/css/*.css')
     .pipe(rename('variaboard.min.css'))
@@ -91,8 +89,6 @@ gulp.task('build-js-src', () => {
   })
   .pipe(source('variaboard.js'))
   .pipe(buffer())
-  //.pipe(sourcemaps.init({ loadMaps: true }))
-  //.pipe(sourcemaps.write('./sourcemaps'))
   .pipe(gulp.dest('./dist'));
 });
 
