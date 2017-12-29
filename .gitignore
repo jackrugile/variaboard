@@ -1,3 +1,4 @@
 /node_modules
 /docs/jsdoc
+npm-debug.log
 .DS_Store
