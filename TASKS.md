@@ -97,20 +97,19 @@
 PLUGIN TASKS
 - [ ] publish on npm
 - [ ] linting file
-- [ ] changelog
-- [ ] roap map
-- [ ] semver releases
+- [x] changelog
+- [ ] road map
+- [x] semver releases
 - [ ] yarn?
 - [ ] tests?
 - [ ] UMD setup
 - [ ] bower
-- [ ] shields/badges
-- [ ] travis
+- [x] shields/badges
+- [x] travis
 - [ ] editor config
 - [ ] cdnjs
 - [ ] unpkg
 - [ ] jsdelivr
-- [ ] jsdoc for methods
-  - [ ] figure out way to view source of function
+- [x] jsdoc for methods
 
 'use strict';?

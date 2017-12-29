@@ -333,7 +333,7 @@ var VariaBoard = function () {
    *
    * @param {object} config - Configuration object
    * @param {object|string} [config.container=document.body] - DOM element or CSS selector
-   * @param {string} [config.title="Control Panel"] - Title of the panel
+   * @param {string} [config.title] - Title of the panel
    *
    * @requires {@link Button}
    * @requires {@link Range}
@@ -361,7 +361,7 @@ var VariaBoard = function () {
     this.raf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
-    this.title = config.title !== undefined ? config.title : 'VariaBoard';
+    this.title = config.title !== undefined ? config.title : null;
 
     this.createDOM();
     this.listen();
@@ -384,10 +384,12 @@ var VariaBoard = function () {
       this.dom.panel.classList.add(this.namespace + '-panel');
 
       // title
-      this.dom.title = document.createElement('h1');
-      this.dom.title.classList.add(this.namespace + '-title');
-      this.dom.title.textContent = this.title;
-      this.dom.panel.appendChild(this.dom.title);
+      if (this.title) {
+        this.dom.title = document.createElement('h1');
+        this.dom.title.classList.add(this.namespace + '-title');
+        this.dom.title.textContent = this.title;
+        this.dom.panel.appendChild(this.dom.title);
+      }
 
       // controls
       this.dom.controls = document.createElement('div');
