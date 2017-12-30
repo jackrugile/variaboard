@@ -2,7 +2,6 @@
 
 const Button = require('./button');
 const Range = require('./controls/range');
-const Calc = require('./util/calc');
 
 class VariaBoard {
 
@@ -15,7 +14,6 @@ class VariaBoard {
    *
    * @requires {@link Button}
    * @requires {@link Range}
-   * @requires {@link Calc}
    */
 
   constructor(config) {
@@ -32,7 +30,7 @@ class VariaBoard {
         x: 0,
         y: 0
       }
-    }
+    };
 
     this.needsUpdate = false;
     this.raf = null;

@@ -19,3 +19,4 @@ VariaBoard is a control interface to modify parameters in JavaScript.
 - Bfxr - [Demo](https://www.bfxr.net/) - [Code](https://github.com/increpare/bfxr) - by [Stephen Lavelle @increpare](https://github.com/increpare)
 - ControlKit - [Demo](https://github.com/automat/controlkit.js/tree/master/examples) - [Code](https://github.com/automat/controlkit.js) - by [Henryk Wollik @automat](https://github.com/automat)
 - Control Panel - [Demo](http://control-panel.surge.sh/) - [Code](https://github.com/freeman-lab/control-panel) - by [Jeremy Freeman @freeman-lab](https://github.com/freeman-lab)
+- oui - [Demo](https://github.com/wearekuva/oui/tree/master/examples) - [Code](https://github.com/wearekuva/oui) - by [Kuva @wearekuva](https://github.com/wearekuva)

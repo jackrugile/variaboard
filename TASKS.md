@@ -86,7 +86,7 @@
 - [x] editor config
 - [x] jsdoc for classes and methods
 - [x] 'use strict';
-- [ ] linting file
+- [x] eslinting
 - [ ] road map
 - [ ] bower
 - [ ] cdnjs

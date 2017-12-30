@@ -70,16 +70,16 @@ class Range extends Control {
     this.dom.value.addEventListener('wheel', (e) => this.onValueMousewheel(e));
   }
 
-  onValueChange(e) {
+  onValueChange() {
     this.set(this.dom.value.value);
     this.valueTarget = this.value;
   }
 
-  onValueFocus(e) {
+  onValueFocus() {
     this.isFocused = true;
   }
 
-  onValueBlur(e) {
+  onValueBlur() {
     this.isFocused = false;
   }
 
@@ -115,12 +115,12 @@ class Range extends Control {
     }
   }
 
-  onWindowMouseup(e) {
+  onWindowMouseup() {
     this.variaboard.onDragEnd();
     this.isMouseDown = false;
   }
 
-  onWindowMousemove(e) {
+  onWindowMousemove() {
     if(this.isMouseDown) {
       this.setDragValue();
     }

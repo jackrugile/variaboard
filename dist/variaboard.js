@@ -69,7 +69,7 @@ var Button = function () {
 
   }, {
     key: 'onButtonClick',
-    value: function onButtonClick(e) {
+    value: function onButtonClick() {
       this.callback();
     }
   }]);
@@ -260,18 +260,18 @@ var Range = function (_Control) {
     }
   }, {
     key: 'onValueChange',
-    value: function onValueChange(e) {
+    value: function onValueChange() {
       this.set(this.dom.value.value);
       this.valueTarget = this.value;
     }
   }, {
     key: 'onValueFocus',
-    value: function onValueFocus(e) {
+    value: function onValueFocus() {
       this.isFocused = true;
     }
   }, {
     key: 'onValueBlur',
-    value: function onValueBlur(e) {
+    value: function onValueBlur() {
       this.isFocused = false;
     }
   }, {
@@ -311,13 +311,13 @@ var Range = function (_Control) {
     }
   }, {
     key: 'onWindowMouseup',
-    value: function onWindowMouseup(e) {
+    value: function onWindowMouseup() {
       this.variaboard.onDragEnd();
       this.isMouseDown = false;
     }
   }, {
     key: 'onWindowMousemove',
-    value: function onWindowMousemove(e) {
+    value: function onWindowMousemove() {
       if (this.isMouseDown) {
         this.setDragValue();
       }
@@ -395,7 +395,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Button = require('./button');
 var Range = require('./controls/range');
-var Calc = require('./util/calc');
 
 var VariaBoard = function () {
 
@@ -408,7 +407,6 @@ var VariaBoard = function () {
    *
    * @requires {@link Button}
    * @requires {@link Range}
-   * @requires {@link Calc}
    */
 
   function VariaBoard(config) {
@@ -660,7 +658,7 @@ var VariaBoard = function () {
 
 module.exports = VariaBoard;
 
-},{"./button":1,"./controls/range":3,"./util/calc":5}],5:[function(require,module,exports){
+},{"./button":1,"./controls/range":3}],5:[function(require,module,exports){
 'use strict';
 
 /**

@@ -53,10 +53,10 @@ class Button {
    * @param {object} e - Event object
    */
 
-  onButtonClick(e) {
+  onButtonClick() {
     this.callback();
   }
 
 }
 
-module.exports = Button
+module.exports = Button;
