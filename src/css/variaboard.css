@@ -137,6 +137,50 @@ canvas {
   transition-duration: 0ms;
 }
 
+.variaboard-control-randomize {
+  align-items: center;
+  background: linear-gradient(#333, #222);
+  cursor: pointer;
+  border-right: 1px solid #000;
+  box-shadow: inset 0 1px 0 #444;
+  display: flex;
+  padding: 0 0.5em;
+}
+
+.variaboard-control-randomize-svg {
+  height: 16px;
+  fill: #555;
+  transition: fill 200ms;
+  width: 16px;
+}
+
+.variaboard-control-randomize:hover .variaboard-control-randomize-svg {
+  fill: #fff;
+  transition-duration: 0ms;
+}
+
+.variaboard-control-mutate {
+  align-items: center;
+  background: linear-gradient(#333, #222);
+  cursor: pointer;
+  border-right: 1px solid #000;
+  box-shadow: inset 0 1px 0 #444;
+  display: flex;
+  padding: 0 0.5em;
+}
+
+.variaboard-control-mutate-svg {
+  height: 16px;
+  fill: #555;
+  transition: fill 200ms;
+  width: 16px;
+}
+
+.variaboard-control-mutate:hover .variaboard-control-mutate-svg {
+  fill: #fff;
+  transition-duration: 0ms;
+}
+
 .variaboard-button {
   background: #444;
   border: none;

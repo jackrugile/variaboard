@@ -65,7 +65,6 @@
 - [ ] custom easing for randomize and mutate, combine map and ease
 - [ ] fix issue with snapped value at end of easing?
 - [ ] set custom mutation ratio
-- [ ] logo
 - [ ] list browser compatibility, get polyfills where needed
 - [ ] look in to accessibility concerns
 - [ ] can this work for touch?
@@ -73,6 +72,8 @@
 - [ ] complete all JSDoc docs
 - [ ] provide common demos and examples
 - [ ] add getting started and more helpful basic docs
+- [ ] logo
+- [ ] favicon
 
 ## Non Plugin Code
 

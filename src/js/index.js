@@ -151,9 +151,9 @@ class VariaBoard {
     this.needsUpdate = false;
     for(let key in this.controls) {
       if(this.controls[key].type === 'range') {
-        this.controls[key].easeSet();
         if(!this.controls[key].settled) {
           this.needsUpdate = true;
+          this.controls[key].easeSet();
         }
       }
     }
@@ -212,16 +212,12 @@ class VariaBoard {
     for(let key in this.controls) {
       this.controls[key].randomize();
     }
-    cancelAnimationFrame(this.raf);
-    this.update();
   }
 
   mutate() {
     for(let key in this.controls) {
       this.controls[key].mutate();
     }
-    cancelAnimationFrame(this.raf);
-    this.update();
   }
 
 }
