@@ -33,14 +33,17 @@
 - [x] keyboard mappings for up/down on each input, larger change when shift key is down
 - [x] randomize all
 - [x] mutate all
-- [x] mousewheel up/down
+- [x] mousewheel up/down, larger change when shift key is down
 - [x] "changeCallback" for any/all control
 - [x] selection colors
 - [x] set decimal count to amount of step, so that it never jumps
 - [x] able to type in numbers
+- [x] eased value setting is now tracked indepently from actual value. actual values will still get rounded to steps properly
+- [x] flash randomize and mutate buttons when all are getting triggered
 
 ## Misc
 
+- [ ] make triggers for animation be more efficient, currently called cancel raf and update multiple times
 - [ ] post set function for mapping to different values?
 - [ ] determine what should be added to base control, and what should be added to specific control types
 - [ ] randomize or mutate single field button
@@ -60,10 +63,7 @@
 - [ ] display units? (px, em, deg)?
 - [ ] output current settings, and output code to rebuild settings (definitions)
 - [ ] methods to add new controls, or load from initial contructor
-- [ ] flash when getting hit by randomize or mutate
-- [ ] set mutate and randomize methods to the control itself
 - [ ] custom easing for randomize and mutate, combine map and ease
-- [ ] fix issue with snapped value at end of easing?
 - [ ] set custom mutation ratio
 - [ ] list browser compatibility, get polyfills where needed
 - [ ] look in to accessibility concerns
@@ -74,6 +74,9 @@
 - [ ] add getting started and more helpful basic docs
 - [ ] logo
 - [ ] favicon
+- [ ] label text and input text aren't perfectly aligned vertically
+- [ ] click and drag up/down on input value to change value? (like dat gui)
+- [ ] does travis need the gulp-cli install?
 
 ## Non Plugin Code
 
@@ -87,7 +90,8 @@
 - [x] editor config
 - [x] jsdoc for classes and methods
 - [x] 'use strict';
-- [x] eslinting
+- [x] eslint
+- [ ] csslint
 - [ ] road map
 - [ ] bower
 - [ ] cdnjs

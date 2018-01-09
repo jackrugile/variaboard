@@ -32,9 +32,11 @@ class Range extends Control {
 
     this.min = config.min;
     this.max = config.max;
+    this.size = this.max - this.min;
     this.step = config.step !== undefined ? Math.abs(config.step) : 1;
     this.places = this.step.toString().indexOf('.') > -1 ? this.step.toString().split('.')[1].length : 0;
-    this.valueTarget = this.value;
+    this.easedValue = this.value;
+    this.easedValueTarget = this.value;
 
     this.isMouseDown = false;
     this.settled = false;
@@ -59,7 +61,7 @@ class Range extends Control {
     // mutate
     this.dom.mutate = document.createElement('div');
     this.dom.mutate.classList.add(`${this.variaboard.namespace}-control-mutate`);
-    this.dom.randomize.setAttribute('title', 'Mutate');
+    this.dom.mutate.setAttribute('title', 'Mutate');
     this.dom.mutate.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" class="${this.variaboard.namespace}-control-mutate-svg"><path d="M20.759 20.498c-2.342-3.663-5.575-6.958-5.743-11.498h-2.016c.173 5.212 3.512 8.539 5.953 12.356.143.302-.068.644-.377.644h-1.264l-4.734-7h-3.52c.873-1.665 1.85-3.414 1.936-6h-2.01c-.169 4.543-3.421 7.864-5.743 11.498-.165.347-.241.707-.241 1.057 0 1.283 1.023 2.445 2.423 2.445h13.153c1.4 0 2.424-1.162 2.424-2.446 0-.35-.076-.709-.241-1.056zm-4.759-15.498c0 1.105-.896 2-2 2s-2-.895-2-2 .896-2 2-2 2 .895 2 2zm-5-1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5.672-1.5 1.5-1.5 1.5.671 1.5 1.5zm0 3.5c0 .552-.447 1-1 1s-1-.448-1-1 .447-1 1-1 1 .448 1 1zm3-6c0 .552-.447 1-1 1s-1-.448-1-1 .447-1 1-1 1 .448 1 1z"/></svg>
 `;
     this.dom.control.appendChild(this.dom.mutate);
@@ -91,7 +93,7 @@ class Range extends Control {
 
   onValueChange() {
     this.set(this.dom.value.value);
-    this.valueTarget = this.value;
+    this.easedValueTarget = this.value;
   }
 
   onValueFocus() {
@@ -103,7 +105,7 @@ class Range extends Control {
   }
 
   onValueKeydown(e) {
-    let change = e.shiftKey ? this.step * 10 : this.step;
+    let change = e.shiftKey ? this.step * 4 : this.step;
     switch(e.which) {
       case 38:
         this.set(this.get() + change);
@@ -116,11 +118,11 @@ class Range extends Control {
 
   onValueMousewheel(e) {
     if(this.isFocused) {
-      let change = this.step;
-      if(e.deltaY < 0) {
-        this.set(this.get() + change);
-      } else if(e.deltaY > 0) {
+      let change = e.shiftKey ? this.step * 4 : this.step;
+      if(e.wheelDelta < 0) {
         this.set(this.get() - change);
+      } else if(e.wheelDelta > 0) {
+        this.set(this.get() + change);
       }
     }
   }
@@ -131,6 +133,7 @@ class Range extends Control {
     this.variaboard.mouse.anchor.x = e.clientX;
     this.variaboard.mouse.anchor.y = e.clientY;
     this.isMouseDown = true;
+    this.dom.control.classList.add(`${this.variaboard.namespace}-control-is-dragging`);
     this.setDragValue();
   }
 
@@ -145,6 +148,7 @@ class Range extends Control {
   onWindowMouseup() {
     this.variaboard.onDragEnd();
     this.isMouseDown = false;
+    this.dom.control.classList.remove(`${this.variaboard.namespace}-control-is-dragging`);
   }
 
   onWindowMousemove() {
@@ -163,10 +167,15 @@ class Range extends Control {
     }
 
     this.settled = false;
-    this.valueTarget = Calc.rand(this.min, this.max);
+    this.easedValue = this.value;
+    this.easedValueTarget = Calc.roundToNearestInterval(Calc.rand(this.min, this.max), this.step);
 
     cancelAnimationFrame(this.variaboard.raf);
     this.variaboard.update();
+
+    this.dom.control.classList.add(`${this.variaboard.namespace}-control-randomizing`);
+    void this.dom.control.offsetWidth;
+    this.dom.control.classList.remove(`${this.variaboard.namespace}-control-randomizing`);
   }
 
   mutate() {
@@ -174,36 +183,42 @@ class Range extends Control {
       return;
     }
 
-    let size = (this.max - this.min) / 15;
+    let size = this.size / 15;
     this.settled = false;
-    this.valueTarget = this.get() + Calc.rand(-size, size);
+    this.easedValue = this.value;
+    this.easedValueTarget = this.get() + Calc.rand(-size, size);
 
     cancelAnimationFrame(this.variaboard.raf);
     this.variaboard.update();
+
+    this.dom.control.classList.add(`${this.variaboard.namespace}-control-mutating`);
+    void this.dom.control.offsetWidth;
+    this.dom.control.classList.remove(`${this.variaboard.namespace}-control-mutating`);
   }
 
   setDragValue() {
     this.set(Calc.map(this.variaboard.mouse.x, this.bcr.left, this.bcr.right, this.min, this.max));
-    this.valueTarget = this.value;
+    this.easedValueTarget = this.value;
   }
 
   easeSet() {
-    if(Math.abs(this.value - this.valueTarget) > this.step / 2) {
-      this.value += (this.valueTarget - this.value) * 0.2;
-      this.set(this.value, true);
+    if(Math.abs(this.easedValue - this.easedValueTarget) > this.step / 2) {
+      this.easedValue += (this.easedValueTarget - this.easedValue) * 0.2;
+      this.set(this.easedValue);
     } else {
       this.settled = true;
-      this.value = this.valueTarget;
+      this.easedValue = this.easedValueTarget;
+      this.value = this.easedValueTarget;
       this.set(this.value);
     }
   }
 
-  set(val, bypassRounding) {
+  set(val/*, bypassRounding*/) {
     // sanitize value
     val = parseFloat(val);
     val = isNaN(val) ? this.default : val;
     val = Calc.clamp(val, this.min, this.max);
-    val = bypassRounding ? val : Calc.roundToNearestInterval(val, this.step);
+    val = Calc.roundToNearestInterval(val, this.step);
     this.value = val;
 
     // set input value
