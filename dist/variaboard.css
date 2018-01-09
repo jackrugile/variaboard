@@ -247,9 +247,11 @@ canvas {
   width: 100%;
 }
 
-.variaboard-control:hover .variaboard-control-range-inner,
-.variaboard-control.variaboard-control-is-dragging .variaboard-control-range-inner {
+.variaboard-control:hover .variaboard-control-range-inner {
   background: #fff;
+}
+
+.variaboard-control.variaboard-control-is-dragging .variaboard-control-range-inner {
   transition-duration: 0ms;
 }
 

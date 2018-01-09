@@ -184,6 +184,7 @@ var Calc = require('../util/calc');
  * @param {boolean} config.randomizable - Can be randomized individually and by randomizing all
  * @param {boolean} config.mutable - Can be mutated individually and by mutating all
  * @param {boolean} config.locked - Temporarily toggle whether the control is affected by randomization and mutation
+ * @param {boolean} config.eased - When randomizing or mutating a value, animate the value with eased
  *
  * @extends Control
  *
@@ -205,6 +206,7 @@ var Range = function (_Control) {
     _this.max = config.max;
     _this.size = _this.max - _this.min;
     _this.step = config.step !== undefined ? Math.abs(config.step) : 1;
+    _this.eased = config.eased !== undefined ? config.eased : true;
     _this.places = _this.step.toString().indexOf('.') > -1 ? _this.step.toString().split('.')[1].length : 0;
     _this.easedValue = _this.value;
     _this.easedValueTarget = _this.value;
@@ -370,12 +372,17 @@ var Range = function (_Control) {
         return;
       }
 
-      this.settled = false;
-      this.easedValue = this.value;
-      this.easedValueTarget = Calc.roundToNearestInterval(Calc.rand(this.min, this.max), this.step);
+      var val = Calc.roundToNearestInterval(Calc.rand(this.min, this.max), this.step);
+      if (this.eased) {
+        this.settled = false;
+        this.easedValue = this.value;
+        this.easedValueTarget = val;
 
-      cancelAnimationFrame(this.variaboard.raf);
-      this.variaboard.update();
+        cancelAnimationFrame(this.variaboard.raf);
+        this.variaboard.update();
+      } else {
+        this.set(val);
+      }
 
       this.dom.control.classList.add(this.variaboard.namespace + '-control-randomizing');
       void this.dom.control.offsetWidth;
@@ -389,12 +396,17 @@ var Range = function (_Control) {
       }
 
       var size = this.size / 15;
-      this.settled = false;
-      this.easedValue = this.value;
-      this.easedValueTarget = this.get() + Calc.rand(-size, size);
+      var val = this.get() + Calc.rand(-size, size);
+      if (this.eased) {
+        this.settled = false;
+        this.easedValue = this.value;
+        this.easedValueTarget = val;
 
-      cancelAnimationFrame(this.variaboard.raf);
-      this.variaboard.update();
+        cancelAnimationFrame(this.variaboard.raf);
+        this.variaboard.update();
+      } else {
+        this.set(val);
+      }
 
       this.dom.control.classList.add(this.variaboard.namespace + '-control-mutating');
       void this.dom.control.offsetWidth;
