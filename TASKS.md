@@ -77,6 +77,10 @@
 - [ ] label text and input text aren't perfectly aligned vertically
 - [ ] click and drag up/down on input value to change value? (like dat gui)
 - [ ] does travis need the gulp-cli install?
+- [ ] don't trigger single change or global change if the value stayed the same, in fact, return early
+- [ ] be able to override global defaults
+- [ ] don't trigger onchangecallback more than once, and not at start
+- [ ] add description opion to inputs
 
 ## Non Plugin Code
 
