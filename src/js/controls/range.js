@@ -190,7 +190,7 @@ class Range extends Control {
       return;
     }
 
-    let size = this.size / 15;
+    let size = Math.max(this.size / 15, this.step);
     let val = this.get() + Calc.rand(-size, size);
     if(this.eased) {
       this.settled = false;
