@@ -133,11 +133,6 @@ var Control = function () {
       this.variaboard.dom.controls.appendChild(this.dom.control);
     }
   }, {
-    key: 'get',
-    value: function get() {
-      return this.value;
-    }
-  }, {
     key: 'lock',
     value: function lock() {
       this.locked = true;
@@ -169,6 +164,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var Control = require('./control');
 var Calc = require('../util/calc');
+var Ease = require('../util/ease');
 
 /**
  * Create a range control
@@ -207,9 +203,15 @@ var Range = function (_Control) {
     _this.size = _this.max - _this.min;
     _this.step = config.step !== undefined ? Math.abs(config.step) : 1;
     _this.eased = config.eased !== undefined ? config.eased : true;
+    _this.easedDuration = config.easedDuration !== undefined ? config.easedDuration : 500;
+    _this.easedFunc = config.easedFunc !== undefined ? Ease[config.easedFunc] : Ease['outExpo'];
     _this.places = _this.step.toString().indexOf('.') > -1 ? _this.step.toString().split('.')[1].length : 0;
-    _this.easedValue = _this.value;
+
+    _this.easedValueStart = _this.value;
     _this.easedValueTarget = _this.value;
+    _this.easedTime = null;
+    _this.easedLastTime = null;
+    _this.easedElapsedTime = 0;
 
     _this.isMouseDown = false;
     _this.settled = false;
@@ -218,7 +220,7 @@ var Range = function (_Control) {
     _this.onWindowResize();
 
     _this.listen();
-    _this.set(_this.value);
+    _this.set(_this.value, true);
     return _this;
   }
 
@@ -306,10 +308,10 @@ var Range = function (_Control) {
       var change = e.shiftKey ? this.step * 4 : this.step;
       switch (e.which) {
         case 38:
-          this.set(this.get() + change);
+          this.set(this.value + change);
           break;
         case 40:
-          this.set(this.get() - change);
+          this.set(this.value - change);
           break;
       }
     }
@@ -319,9 +321,9 @@ var Range = function (_Control) {
       if (this.isFocused) {
         var change = e.shiftKey ? this.step * 4 : this.step;
         if (e.wheelDelta < 0) {
-          this.set(this.get() - change);
+          this.set(this.value - change);
         } else if (e.wheelDelta > 0) {
-          this.set(this.get() + change);
+          this.set(this.value + change);
         }
       }
     }
@@ -375,10 +377,10 @@ var Range = function (_Control) {
       var val = Calc.roundToNearestInterval(Calc.rand(this.min, this.max), this.step);
       if (this.eased) {
         this.settled = false;
-        this.easedValue = this.value;
+        this.easedValueStart = this.value;
         this.easedValueTarget = val;
 
-        cancelAnimationFrame(this.variaboard.raf);
+        window.cancelAnimationFrame(this.variaboard.raf);
         this.variaboard.update();
       } else {
         this.set(val);
@@ -395,14 +397,22 @@ var Range = function (_Control) {
         return;
       }
 
-      var size = this.size / 15;
-      var val = this.get() + Calc.rand(-size, size);
+      var size = Math.max(this.size / 15, this.step);
+      var val = null;
+      if (this.value === this.min) {
+        val = this.value + Calc.rand(0, size);
+      } else if (this.value === this.max) {
+        val = this.value + Calc.rand(-size, 0);
+      } else {
+        val = this.value + Calc.rand(-size, size);
+      }
+
       if (this.eased) {
         this.settled = false;
-        this.easedValue = this.value;
+        this.easedValueStart = this.value;
         this.easedValueTarget = val;
 
-        cancelAnimationFrame(this.variaboard.raf);
+        window.cancelAnimationFrame(this.variaboard.raf);
         this.variaboard.update();
       } else {
         this.set(val);
@@ -421,24 +431,40 @@ var Range = function (_Control) {
   }, {
     key: 'easeSet',
     value: function easeSet() {
-      if (Math.abs(this.easedValue - this.easedValueTarget) > this.step / 2) {
-        this.easedValue += (this.easedValueTarget - this.easedValue) * 0.2;
-        this.set(this.easedValue);
+      this.easedTime = Date.now();
+      if (this.easedLastTime !== null) {
+        this.easedElapsedTime += this.easedTime - this.easedLastTime;
+        this.easedElapsedTime = Calc.clamp(this.easedElapsedTime, 0, this.easedDuration);
+      }
+      this.easedLastTime = this.easedTime;
+
+      if (this.easedElapsedTime < this.easedDuration) {
+        this.set(Calc.map(this.easedFunc(this.easedElapsedTime, 0, 1, this.easedDuration), 0, 1, this.easedValueStart, this.easedValueTarget));
       } else {
+        this.easedTime = null;
+        this.easedLastTime = null;
+        this.easedElapsedTime = 0;
         this.settled = true;
-        this.easedValue = this.easedValueTarget;
-        this.value = this.easedValueTarget;
-        this.set(this.value);
+        this.set(this.easedValueTarget);
       }
     }
   }, {
     key: 'set',
-    value: function set(val /*, bypassRounding*/) {
+    value: function set(val) {
+      var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
       // sanitize value
       val = parseFloat(val);
       val = isNaN(val) ? this.default : val;
       val = Calc.clamp(val, this.min, this.max);
       val = Calc.roundToNearestInterval(val, this.step);
+
+      // exit out if the value hasn't changed and it is not forced
+      if (val === this.value && !force) {
+        return;
+      }
+
+      // set the new value
       this.value = val;
 
       // set input value
@@ -450,7 +476,9 @@ var Range = function (_Control) {
       // set the title attribute for the control
       this.dom.control.setAttribute('title', this.title + ': ' + this.value.toFixed(this.places));
 
-      this.variaboard.changeCallback.call(this.variaboard);
+      // queue up change callback
+      window.cancelAnimationFrame(this.variaboard.changeRaf);
+      this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
     }
   }]);
 
@@ -459,7 +487,7 @@ var Range = function (_Control) {
 
 module.exports = Range;
 
-},{"../util/calc":5,"./control":2}],4:[function(require,module,exports){
+},{"../util/calc":5,"../util/ease":6,"./control":2}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -503,6 +531,8 @@ var VariaBoard = function () {
     this.needsUpdate = false;
     this.raf = null;
     this.isDragging = false;
+
+    this.changeRaf = null;
 
     this.container = config.container !== undefined ? config.container : document.body;
     this.class = config.class !== undefined ? config.class : null;
@@ -651,7 +681,7 @@ var VariaBoard = function () {
       }
 
       if (this.needsUpdate) {
-        this.raf = requestAnimationFrame(function () {
+        this.raf = window.requestAnimationFrame(function () {
           return _this2.update();
         });
       }
@@ -703,7 +733,7 @@ var VariaBoard = function () {
     value: function get(id) {
       var control = this.controls[id];
       if (control) {
-        return control.get();
+        return control.value;
       }
     }
   }, {
@@ -813,6 +843,634 @@ var Calc = function () {
 }();
 
 module.exports = Calc;
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+/**
+ * Easing equations
+ */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Ease = function () {
+
+  /*
+  ------------------------------------------
+  | constructor:void
+  |
+  | Construct
+  ------------------------------------------ */
+  function Ease() {
+    _classCallCheck(this, Ease);
+  }
+
+  /*
+  ------------------------------------------
+  | inQuad:float - returns eased float value
+  |
+  | t:number - current time
+  | b:number - beginning value
+  | c:number - change in value
+  | d:number - duration
+  |
+  | Get an eased float value based on inQuad.
+  ------------------------------------------ */
+
+
+  _createClass(Ease, null, [{
+    key: 'linear',
+    value: function linear(t, b, c, d) {
+      return t / d * (b + c);
+    }
+
+    /*
+    ------------------------------------------
+    | inQuad:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inQuad.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inQuad',
+    value: function inQuad(t, b, c, d) {
+      return c * (t /= d) * t + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outQuad:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outQuad.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outQuad',
+    value: function outQuad(t, b, c, d) {
+      return -c * (t /= d) * (t - 2) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutQuad:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutQuad.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutQuad',
+    value: function inOutQuad(t, b, c, d) {
+      if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+      return -c / 2 * (--t * (t - 2) - 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inCubic:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inCubic.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inCubic',
+    value: function inCubic(t, b, c, d) {
+      return c * (t /= d) * t * t + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outCubic:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outCubic.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outCubic',
+    value: function outCubic(t, b, c, d) {
+      return c * ((t = t / d - 1) * t * t + 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutCubic:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutCubic.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutCubic',
+    value: function inOutCubic(t, b, c, d) {
+      if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+      return c / 2 * ((t -= 2) * t * t + 2) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inQuart:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inQuart.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inQuart',
+    value: function inQuart(t, b, c, d) {
+      return c * (t /= d) * t * t * t + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outQuart:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outQuart.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outQuart',
+    value: function outQuart(t, b, c, d) {
+      return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutQuart:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutQuart.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutQuart',
+    value: function inOutQuart(t, b, c, d) {
+      if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+      return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inQuint:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inQuint.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inQuint',
+    value: function inQuint(t, b, c, d) {
+      return c * (t /= d) * t * t * t * t + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outQuint:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outQuint.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outQuint',
+    value: function outQuint(t, b, c, d) {
+      return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutQuint:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutQuint.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutQuint',
+    value: function inOutQuint(t, b, c, d) {
+      if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
+      return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inSine:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inSine.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inSine',
+    value: function inSine(t, b, c, d) {
+      return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outSine:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outSine.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outSine',
+    value: function outSine(t, b, c, d) {
+      return c * Math.sin(t / d * (Math.PI / 2)) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutSine:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutSine.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutSine',
+    value: function inOutSine(t, b, c, d) {
+      return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inExpo:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inExpo.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inExpo',
+    value: function inExpo(t, b, c, d) {
+      return t == 0 ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outExpo:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outExpo.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outExpo',
+    value: function outExpo(t, b, c, d) {
+      return t == d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutExpo:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutExpo.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutExpo',
+    value: function inOutExpo(t, b, c, d) {
+      if (t == 0) return b;
+      if (t == d) return b + c;
+      if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+      return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inCirc:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inCirc.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inCirc',
+    value: function inCirc(t, b, c, d) {
+      return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outCirc:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outCirc.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outCirc',
+    value: function outCirc(t, b, c, d) {
+      return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutCirc:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutCirc.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutCirc',
+    value: function inOutCirc(t, b, c, d) {
+      if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+      return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inElastic:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inElastic.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inElastic',
+    value: function inElastic(t, b, c, d) {
+      var s = 1.70158;var p = 0;var a = c;
+      if (t == 0) return b;if ((t /= d) == 1) return b + c;if (!p) p = d * .3;
+      if (a < Math.abs(c)) {
+        a = c;var s = p / 4;
+      } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+      return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outElastic:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outElastic.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outElastic',
+    value: function outElastic(t, b, c, d) {
+      var s = 1.70158;var p = 0;var a = c;
+      if (t == 0) return b;if ((t /= d) == 1) return b + c;if (!p) p = d * .3;
+      if (a < Math.abs(c)) {
+        a = c;var s = p / 4;
+      } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+      return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutElastic:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutElastic.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutElastic',
+    value: function inOutElastic(t, b, c, d) {
+      var s = 1.70158;var p = 0;var a = c;
+      if (t == 0) return b;if ((t /= d / 2) == 2) return b + c;if (!p) p = d * (.3 * 1.5);
+      if (a < Math.abs(c)) {
+        a = c;var s = p / 4;
+      } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+      if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+      return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inBack:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    | s:number - strength
+    |
+    | Get an eased float value based on inBack.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inBack',
+    value: function inBack(t, b, c, d, s) {
+      if (s == undefined) s = 1.70158;
+      return c * (t /= d) * t * ((s + 1) * t - s) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outBack:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    | s:number - strength
+    |
+    | Get an eased float value based on outBack.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outBack',
+    value: function outBack(t, b, c, d, s) {
+      if (s == undefined) s = 1.70158;
+      return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inOutBack:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    | s:number - strength
+    |
+    | Get an eased float value based on inOutBack.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutBack',
+    value: function inOutBack(t, b, c, d, s) {
+      if (s == undefined) s = 1.70158;
+      if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b;
+      return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | inBounce:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outBounce.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inBounce',
+    value: function inBounce(t, b, c, d) {
+      return c - this.outBounce(d - t, 0, c, d) + b;
+    }
+
+    /*
+    ------------------------------------------
+    | outBounce:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on outBounce.
+    ------------------------------------------ */
+
+  }, {
+    key: 'outBounce',
+    value: function outBounce(t, b, c, d) {
+      if ((t /= d) < 1 / 2.75) {
+        return c * (7.5625 * t * t) + b;
+      } else if (t < 2 / 2.75) {
+        return c * (7.5625 * (t -= 1.5 / 2.75) * t + .75) + b;
+      } else if (t < 2.5 / 2.75) {
+        return c * (7.5625 * (t -= 2.25 / 2.75) * t + .9375) + b;
+      } else {
+        return c * (7.5625 * (t -= 2.625 / 2.75) * t + .984375) + b;
+      }
+    }
+
+    /*
+    ------------------------------------------
+    | inOutBounce:float - returns eased float value
+    |
+    | t:number - current time
+    | b:number - beginning value
+    | c:number - change in value
+    | d:number - duration
+    |
+    | Get an eased float value based on inOutBounce.
+    ------------------------------------------ */
+
+  }, {
+    key: 'inOutBounce',
+    value: function inOutBounce(t, b, c, d) {
+      if (t < d / 2) return this.inBounce(t * 2, 0, c, d) * .5 + b;
+      return this.outBounce(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+    }
+  }]);
+
+  return Ease;
+}();
+
+module.exports = Ease;
 
 },{}]},{},[4])(4)
 });

@@ -16,7 +16,9 @@
       let varia = new VariaBoard({
         container: document.body,
         title: 'VariaBoard 1',
-        changeCallback: function() {}
+        changeCallback: () => {
+          //console.log(123);
+        }
       });
 
       varia.addRange({
@@ -28,8 +30,7 @@
         default: 40,
         randomizable: true,
         mutable: true,
-        locked: false,
-        eased: false
+        locked: false
       });
 
       varia.addRange({

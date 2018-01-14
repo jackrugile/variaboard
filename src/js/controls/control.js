@@ -44,10 +44,6 @@ class Control {
     this.variaboard.dom.controls.appendChild(this.dom.control);
   }
 
-  get() {
-    return this.value;
-  }
-
   lock() {
     this.locked = true;
   }

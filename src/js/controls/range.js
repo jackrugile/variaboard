@@ -2,6 +2,7 @@
 
 const Control = require('./control');
 const Calc = require('../util/calc');
+const Ease = require('../util/ease');
 
 /**
  * Create a range control
@@ -36,9 +37,15 @@ class Range extends Control {
     this.size = this.max - this.min;
     this.step = config.step !== undefined ? Math.abs(config.step) : 1;
     this.eased = config.eased !== undefined ? config.eased : true;
+    this.easedDuration = config.easedDuration !== undefined ? config.easedDuration : 500;
+    this.easedFunc = config.easedFunc !== undefined ? Ease[config.easedFunc] : Ease['outExpo'];
     this.places = this.step.toString().indexOf('.') > -1 ? this.step.toString().split('.')[1].length : 0;
-    this.easedValue = this.value;
+
+    this.easedValueStart = this.value;
     this.easedValueTarget = this.value;
+    this.easedTime = null;
+    this.easedLastTime = null;
+    this.easedElapsedTime = 0;
 
     this.isMouseDown = false;
     this.settled = false;
@@ -47,7 +54,7 @@ class Range extends Control {
     this.onWindowResize();
 
     this.listen();
-    this.set(this.value);
+    this.set(this.value, true);
   }
 
   createDOM() {
@@ -110,10 +117,10 @@ class Range extends Control {
     let change = e.shiftKey ? this.step * 4 : this.step;
     switch(e.which) {
       case 38:
-        this.set(this.get() + change);
+        this.set(this.value + change);
         break;
       case 40:
-        this.set(this.get() - change);
+        this.set(this.value - change);
         break;
     }
   }
@@ -122,9 +129,9 @@ class Range extends Control {
     if(this.isFocused) {
       let change = e.shiftKey ? this.step * 4 : this.step;
       if(e.wheelDelta < 0) {
-        this.set(this.get() - change);
+        this.set(this.value - change);
       } else if(e.wheelDelta > 0) {
-        this.set(this.get() + change);
+        this.set(this.value + change);
       }
     }
   }
@@ -171,10 +178,10 @@ class Range extends Control {
     let val = Calc.roundToNearestInterval(Calc.rand(this.min, this.max), this.step);
     if(this.eased) {
       this.settled = false;
-      this.easedValue = this.value;
+      this.easedValueStart = this.value;
       this.easedValueTarget = val;
 
-      cancelAnimationFrame(this.variaboard.raf);
+      window.cancelAnimationFrame(this.variaboard.raf);
       this.variaboard.update();
     } else {
       this.set(val);
@@ -191,13 +198,21 @@ class Range extends Control {
     }
 
     let size = Math.max(this.size / 15, this.step);
-    let val = this.get() + Calc.rand(-size, size);
+    let val = null;
+    if(this.value === this.min) {
+      val = this.value + Calc.rand(0, size);
+    } else if(this.value === this.max) {
+      val = this.value + Calc.rand(-size, 0);
+    } else {
+      val = this.value + Calc.rand(-size, size);
+    }
+
     if(this.eased) {
       this.settled = false;
-      this.easedValue = this.value;
+      this.easedValueStart = this.value;
       this.easedValueTarget = val;
 
-      cancelAnimationFrame(this.variaboard.raf);
+      window.cancelAnimationFrame(this.variaboard.raf);
       this.variaboard.update();
     } else {
       this.set(val);
@@ -214,23 +229,37 @@ class Range extends Control {
   }
 
   easeSet() {
-    if(Math.abs(this.easedValue - this.easedValueTarget) > this.step / 2) {
-      this.easedValue += (this.easedValueTarget - this.easedValue) * 0.2;
-      this.set(this.easedValue);
+    this.easedTime = Date.now();
+    if(this.easedLastTime !== null) {
+      this.easedElapsedTime += this.easedTime - this.easedLastTime;
+      this.easedElapsedTime = Calc.clamp(this.easedElapsedTime, 0, this.easedDuration);
+    }
+    this.easedLastTime = this.easedTime;
+
+    if(this.easedElapsedTime < this.easedDuration) {
+      this.set(Calc.map(this.easedFunc(this.easedElapsedTime, 0, 1, this.easedDuration), 0, 1, this.easedValueStart, this.easedValueTarget));
     } else {
+      this.easedTime = null;
+      this.easedLastTime = null;
+      this.easedElapsedTime = 0;
       this.settled = true;
-      this.easedValue = this.easedValueTarget;
-      this.value = this.easedValueTarget;
-      this.set(this.value);
+      this.set(this.easedValueTarget);
     }
   }
 
-  set(val/*, bypassRounding*/) {
+  set(val, force = false) {
     // sanitize value
     val = parseFloat(val);
     val = isNaN(val) ? this.default : val;
     val = Calc.clamp(val, this.min, this.max);
     val = Calc.roundToNearestInterval(val, this.step);
+
+    // exit out if the value hasn't changed and it is not forced
+    if(val === this.value && !force) {
+      return;
+    }
+
+    // set the new value
     this.value = val;
 
     // set input value
@@ -242,7 +271,9 @@ class Range extends Control {
     // set the title attribute for the control
     this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}`);
 
-    this.variaboard.changeCallback.call(this.variaboard);
+    // queue up change callback
+    window.cancelAnimationFrame(this.variaboard.changeRaf);
+    this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
   }
 
 }

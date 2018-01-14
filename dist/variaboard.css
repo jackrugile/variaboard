@@ -37,10 +37,10 @@ canvas {
 
 .variaboard-panel.variaboard-is-dragging {
   -webkit-touch-callout: none;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .variaboard-title::-moz-selection,
@@ -82,7 +82,6 @@ canvas {
 }
 
 .variaboard-control {
-  //background: #222;
   border-bottom: 1px solid #000;
   display: -webkit-box;
   display: flex;
@@ -90,7 +89,6 @@ canvas {
 }
 
 .variaboard-control:hover {
-  //background: #333;
   transition-duration: 0ms;
 }
 
@@ -101,7 +99,6 @@ canvas {
 .variaboard-control-title {
   background: #222;
   border: 1px solid #333;
-  //border-right: 1px solid #000;
   color: #999;
   -webkit-box-flex: 1;
           flex: 1 1 35%;
@@ -123,7 +120,6 @@ canvas {
 .variaboard-control-value {
   background: #111;
   border: 1px solid #333;
-  //border-right: 1px solid #000;
   border-radius: 0;
   box-shadow: inset 0 0 0 1px transparent;
   color: inherit;
@@ -241,9 +237,9 @@ canvas {
   height: 101%;
   -webkit-transform-origin: 0% 50%;
           transform-origin: 0% 50%;
-  transition: background 200ms, -webkit-transform 200ms ease-out;
-  transition: background 200ms, transform 200ms ease-out;
-  transition: background 200ms, transform 200ms ease-out, -webkit-transform 200ms ease-out;
+  transition: background 200ms, -webkit-transform 100ms;
+  transition: background 200ms, transform 100ms;
+  transition: background 200ms, transform 100ms, -webkit-transform 100ms;
   width: 100%;
 }
 

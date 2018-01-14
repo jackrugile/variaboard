@@ -36,6 +36,8 @@ class VariaBoard {
     this.raf = null;
     this.isDragging = false;
 
+    this.changeRaf = null;
+
     this.container = config.container !== undefined ? config.container : document.body;
     this.class = config.class !== undefined ? config.class : null;
     this.title = config.title !== undefined ? config.title : null;
@@ -159,7 +161,7 @@ class VariaBoard {
     }
 
     if(this.needsUpdate) {
-      this.raf = requestAnimationFrame(() => this.update());
+      this.raf = window.requestAnimationFrame(() => this.update());
     }
   }
 
@@ -204,7 +206,7 @@ class VariaBoard {
   get(id) {
     let control = this.controls[id];
     if(control) {
-      return control.get();
+      return control.value;
     }
   }
 

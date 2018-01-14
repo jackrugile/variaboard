@@ -80,7 +80,7 @@
 - [ ] don't trigger single change or global change if the value stayed the same, in fact, return early
 - [ ] be able to override global defaults
 - [ ] don't trigger onchangecallback more than once, and not at start
-- [ ] add description opion to inputs
+- [ ] add description option to inputs
 
 ## Non Plugin Code
 
@@ -95,7 +95,6 @@
 - [x] jsdoc for classes and methods
 - [x] 'use strict';
 - [x] eslint
-- [ ] csslint
 - [ ] road map
 - [ ] bower
 - [ ] cdnjs
