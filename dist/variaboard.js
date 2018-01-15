@@ -82,32 +82,43 @@ module.exports = Button;
 },{}],2:[function(require,module,exports){
 'use strict';
 
-/**
- * Create a control
- */
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Control = function () {
-  function Control(variaboard, config) {
-    _classCallCheck(this, Control);
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-    this.variaboard = variaboard;
-    this.type = config.type;
-    this.id = config.id;
-    this.title = config.title;
-    this.default = config.default;
-    this.randomizable = config.randomizable !== undefined ? config.randomizable : true;
-    this.mutable = config.mutable !== undefined ? config.mutable : true;
-    this.locked = config.locked !== undefined ? config.locked : false;
-    this.value = this.default;
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-    this.createDOM();
+var Control = require('./control');
+var Calc = require('../util/calc');
+
+var BooleanControl = function (_Control) {
+  _inherits(BooleanControl, _Control);
+
+  function BooleanControl(variaboard, config) {
+    _classCallCheck(this, BooleanControl);
+
+    var _this = _possibleConstructorReturn(this, (BooleanControl.__proto__ || Object.getPrototypeOf(BooleanControl)).call(this));
+
+    _this.type = 'boolean';
+    _this.variaboard = variaboard;
+    _this.id = config.id;
+    _this.title = config.title;
+    _this.default = config.default;
+    _this.randomizable = config.randomizable !== undefined ? config.randomizable : true;
+    _this.mutable = config.mutable !== undefined ? config.mutable : true;
+    _this.locked = config.locked !== undefined ? config.locked : false;
+    _this.suffix = config.suffix !== undefined ? config.suffix : '';
+    _this.isFocused = false;
+    _this.createDOM();
+    _this.listen();
+    _this.set(_this.default, true, false);
+
+    return _this;
   }
 
-  _createClass(Control, [{
+  _createClass(BooleanControl, [{
     key: 'createDOM',
     value: function createDOM() {
       this.dom = {};
@@ -123,14 +134,109 @@ var Control = function () {
       this.dom.title.setAttribute('for', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
       this.dom.control.appendChild(this.dom.title);
 
-      // value
-      this.dom.value = document.createElement('input');
-      this.dom.value.classList.add(this.variaboard.namespace + '-control-value');
-      this.dom.value.setAttribute('id', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
-      this.dom.control.appendChild(this.dom.value);
+      // checkbox wrap
+      this.dom.checkboxWrap = document.createElement('div');
+      this.dom.checkboxWrap.classList.add(this.variaboard.namespace + '-control-checkbox-wrap');
+      this.dom.control.appendChild(this.dom.checkboxWrap);
+
+      // checkbox
+      this.dom.checkbox = document.createElement('input');
+      this.dom.checkbox.classList.add(this.variaboard.namespace + '-control-checkbox');
+      this.dom.checkbox.setAttribute('type', 'checkbox');
+      this.dom.checkbox.setAttribute('id', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
+      this.dom.checkboxWrap.appendChild(this.dom.checkbox);
 
       // add control to panel
       this.variaboard.dom.controls.appendChild(this.dom.control);
+
+      // suffix
+      this.dom.suffix = document.createElement('div');
+      this.dom.suffix.classList.add(this.variaboard.namespace + '-control-suffix');
+      this.dom.suffix.textContent = this.suffix;
+      this.dom.control.appendChild(this.dom.suffix);
+
+      // randomize
+      this.dom.randomize = document.createElement('div');
+      this.dom.randomize.classList.add(this.variaboard.namespace + '-control-randomize');
+      this.dom.randomize.setAttribute('title', 'Randomize');
+      this.dom.randomize.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" class="' + this.variaboard.namespace + '-control-randomize-svg"><path d="M2 7h-2v-2h2c3.49 0 5.48 1.221 6.822 2.854-.41.654-.754 1.312-1.055 1.939-1.087-1.643-2.633-2.793-5.767-2.793zm16 10c-3.084 0-4.604-1.147-5.679-2.786-.302.627-.647 1.284-1.06 1.937 1.327 1.629 3.291 2.849 6.739 2.849v3l6-4-6-4v3zm0-10v3l6-4-6-4v3c-5.834 0-7.436 3.482-8.85 6.556-1.343 2.921-2.504 5.444-7.15 5.444h-2v2h2c5.928 0 7.543-3.511 8.968-6.609 1.331-2.893 2.479-5.391 7.032-5.391z"/></svg>';
+      this.dom.control.appendChild(this.dom.randomize);
+
+      // mutate
+      this.dom.mutate = document.createElement('div');
+      this.dom.mutate.classList.add(this.variaboard.namespace + '-control-mutate');
+      this.dom.mutate.setAttribute('title', 'Mutate');
+      this.dom.mutate.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" class="' + this.variaboard.namespace + '-control-mutate-svg"><path d="M20.759 20.498c-2.342-3.663-5.575-6.958-5.743-11.498h-2.016c.173 5.212 3.512 8.539 5.953 12.356.143.302-.068.644-.377.644h-1.264l-4.734-7h-3.52c.873-1.665 1.85-3.414 1.936-6h-2.01c-.169 4.543-3.421 7.864-5.743 11.498-.165.347-.241.707-.241 1.057 0 1.283 1.023 2.445 2.423 2.445h13.153c1.4 0 2.424-1.162 2.424-2.446 0-.35-.076-.709-.241-1.056zm-4.759-15.498c0 1.105-.896 2-2 2s-2-.895-2-2 .896-2 2-2 2 .895 2 2zm-5-1.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5.672-1.5 1.5-1.5 1.5.671 1.5 1.5zm0 3.5c0 .552-.447 1-1 1s-1-.448-1-1 .447-1 1-1 1 .448 1 1zm3-6c0 .552-.447 1-1 1s-1-.448-1-1 .447-1 1-1 1 .448 1 1z"/></svg>\n';
+      this.dom.control.appendChild(this.dom.mutate);
+    }
+  }, {
+    key: 'listen',
+    value: function listen() {
+      var _this2 = this;
+
+      this.dom.checkbox.addEventListener('change', function (e) {
+        return _this2.onCheckboxChange(e);
+      });
+      // this.dom.value.addEventListener('focus', (e) => this.onValueFocus(e));
+      // this.dom.value.addEventListener('blur', (e) => this.onValueBlur(e));
+      this.dom.randomize.addEventListener('click', function (e) {
+        return _this2.onRandomizeClick(e);
+      });
+      this.dom.mutate.addEventListener('click', function (e) {
+        return _this2.onMutateClick(e);
+      });
+    }
+  }, {
+    key: 'onCheckboxChange',
+    value: function onCheckboxChange() {
+      this.set(this.dom.checkbox.checked);
+    }
+
+    // onValueFocus() {
+    //   this.isFocused = true;
+    // }
+
+    // onValueBlur() {
+    //   this.isFocused = false;
+    // }
+
+  }, {
+    key: 'onRandomizeClick',
+    value: function onRandomizeClick() {
+      this.randomize();
+    }
+  }, {
+    key: 'onMutateClick',
+    value: function onMutateClick() {
+      this.mutate();
+    }
+  }, {
+    key: 'randomize',
+    value: function randomize() {
+      if (this.locked) {
+        return;
+      }
+
+      var val = Math.random() > 0.5 ? true : false;
+      this.set(val);
+
+      this.dom.control.classList.add(this.variaboard.namespace + '-control-randomizing');
+      void this.dom.control.offsetWidth;
+      this.dom.control.classList.remove(this.variaboard.namespace + '-control-randomizing');
+    }
+  }, {
+    key: 'mutate',
+    value: function mutate() {
+      if (this.locked) {
+        return;
+      }
+
+      var val = Math.random() > 0.5 ? true : false;
+      this.set(val);
+
+      this.dom.control.classList.add(this.variaboard.namespace + '-control-mutating');
+      void this.dom.control.offsetWidth;
+      this.dom.control.classList.remove(this.variaboard.namespace + '-control-mutating');
     }
   }, {
     key: 'lock',
@@ -142,19 +248,58 @@ var Control = function () {
     value: function unlock() {
       this.locked = false;
     }
+  }, {
+    key: 'set',
+    value: function set(val) {
+      var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var triggerChange = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+      // exit out if the value hasn't changed and it is not forced
+      if (val === this.value && !force) {
+        return;
+      }
+
+      // set the new value
+      this.value = val;
+
+      // set checkbox value
+      this.dom.checkbox.checked = this.value;
+
+      // set the title attribute for the control
+      this.dom.control.setAttribute('title', this.title + ': ' + this.value);
+
+      // queue up change callback
+      if (triggerChange) {
+        window.cancelAnimationFrame(this.variaboard.changeRaf);
+        this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
+      }
+    }
   }]);
 
-  return Control;
-}();
+  return BooleanControl;
+}(Control);
+
+module.exports = BooleanControl;
+
+},{"../util/calc":6,"./control":3}],3:[function(require,module,exports){
+'use strict';
+
+/**
+ * Create a control
+ */
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Control = function Control() {
+  _classCallCheck(this, Control);
+};
 
 module.exports = Control;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -188,16 +333,23 @@ var Ease = require('../util/ease');
  * @requires {@link Calc}
  */
 
-var Range = function (_Control) {
-  _inherits(Range, _Control);
+var RangeControl = function (_Control) {
+  _inherits(RangeControl, _Control);
 
-  function Range(variaboard, config) {
-    _classCallCheck(this, Range);
+  function RangeControl(variaboard, config) {
+    _classCallCheck(this, RangeControl);
 
-    var _this = _possibleConstructorReturn(this, (Range.__proto__ || Object.getPrototypeOf(Range)).call(this, variaboard, config));
+    var _this = _possibleConstructorReturn(this, (RangeControl.__proto__ || Object.getPrototypeOf(RangeControl)).call(this));
 
     _this.type = 'range';
-
+    _this.variaboard = variaboard;
+    _this.id = config.id;
+    _this.title = config.title;
+    _this.default = config.default;
+    _this.randomizable = config.randomizable !== undefined ? config.randomizable : true;
+    _this.mutable = config.mutable !== undefined ? config.mutable : true;
+    _this.locked = config.locked !== undefined ? config.locked : false;
+    _this.suffix = config.suffix !== undefined ? config.suffix : '';
     _this.min = config.min;
     _this.max = config.max;
     _this.size = _this.max - _this.min;
@@ -207,8 +359,8 @@ var Range = function (_Control) {
     _this.easedFunc = config.easedFunc !== undefined ? Ease[config.easedFunc] : Ease['outExpo'];
     _this.places = _this.step.toString().indexOf('.') > -1 ? _this.step.toString().split('.')[1].length : 0;
 
-    _this.easedValueStart = _this.value;
-    _this.easedValueTarget = _this.value;
+    _this.easedValueStart = _this.default;
+    _this.easedValueTarget = _this.default;
     _this.easedTime = null;
     _this.easedLastTime = null;
     _this.easedElapsedTime = 0;
@@ -217,17 +369,45 @@ var Range = function (_Control) {
     _this.settled = false;
     _this.isFocused = false;
 
+    _this.createDOM();
+
     _this.onWindowResize();
 
     _this.listen();
-    _this.set(_this.value, true);
+    _this.set(_this.default, true, false);
     return _this;
   }
 
-  _createClass(Range, [{
+  _createClass(RangeControl, [{
     key: 'createDOM',
     value: function createDOM() {
-      _get(Range.prototype.__proto__ || Object.getPrototypeOf(Range.prototype), 'createDOM', this).call(this);
+      this.dom = {};
+
+      // control
+      this.dom.control = document.createElement('div');
+      this.dom.control.classList.add(this.variaboard.namespace + '-control');
+
+      // title
+      this.dom.title = document.createElement('label');
+      this.dom.title.classList.add(this.variaboard.namespace + '-control-title');
+      this.dom.title.textContent = this.title;
+      this.dom.title.setAttribute('for', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
+      this.dom.control.appendChild(this.dom.title);
+
+      // value
+      this.dom.value = document.createElement('input');
+      this.dom.value.classList.add(this.variaboard.namespace + '-control-value');
+      this.dom.value.setAttribute('id', this.variaboard.namespace + '-' + this.id + '-' + this.variaboard.id);
+      this.dom.control.appendChild(this.dom.value);
+
+      // add control to panel
+      this.variaboard.dom.controls.appendChild(this.dom.control);
+
+      // suffix
+      this.dom.suffix = document.createElement('div');
+      this.dom.suffix.classList.add(this.variaboard.namespace + '-control-suffix');
+      this.dom.suffix.textContent = this.suffix;
+      this.dom.control.appendChild(this.dom.suffix);
 
       // randomize
       this.dom.randomize = document.createElement('div');
@@ -423,6 +603,16 @@ var Range = function (_Control) {
       this.dom.control.classList.remove(this.variaboard.namespace + '-control-mutating');
     }
   }, {
+    key: 'lock',
+    value: function lock() {
+      this.locked = true;
+    }
+  }, {
+    key: 'unlock',
+    value: function unlock() {
+      this.locked = false;
+    }
+  }, {
     key: 'setDragValue',
     value: function setDragValue() {
       this.set(Calc.map(this.variaboard.mouse.x, this.bcr.left, this.bcr.right, this.min, this.max));
@@ -452,6 +642,7 @@ var Range = function (_Control) {
     key: 'set',
     value: function set(val) {
       var force = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var triggerChange = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
       // sanitize value
       val = parseFloat(val);
@@ -474,20 +665,22 @@ var Range = function (_Control) {
       this.dom.rangeInner.style.transform = 'scaleX(' + Calc.map(this.value, this.min, this.max, 0, 1) + ')';
 
       // set the title attribute for the control
-      this.dom.control.setAttribute('title', this.title + ': ' + this.value.toFixed(this.places));
+      this.dom.control.setAttribute('title', this.title + ': ' + this.value.toFixed(this.places) + this.suffix);
 
       // queue up change callback
-      window.cancelAnimationFrame(this.variaboard.changeRaf);
-      this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
+      if (triggerChange) {
+        window.cancelAnimationFrame(this.variaboard.changeRaf);
+        this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
+      }
     }
   }]);
 
-  return Range;
+  return RangeControl;
 }(Control);
 
-module.exports = Range;
+module.exports = RangeControl;
 
-},{"../util/calc":5,"../util/ease":6,"./control":2}],4:[function(require,module,exports){
+},{"../util/calc":6,"../util/ease":7,"./control":3}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -495,7 +688,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Button = require('./button');
-var Range = require('./controls/range');
+var RangeControl = require('./controls/range-control');
+var BooleanControl = require('./controls/boolean-control');
 
 var VariaBoard = function () {
 
@@ -611,7 +805,9 @@ var VariaBoard = function () {
       this.mouse.down = false;
       for (var key in this.controls) {
         var control = this.controls[key];
-        control.onWindowMouseup(e);
+        if (control && control.type === 'range') {
+          control.onWindowMouseup(e);
+        }
       }
     }
 
@@ -628,7 +824,7 @@ var VariaBoard = function () {
       this.mouse.y = e.clientY;
       for (var key in this.controls) {
         var control = this.controls[key];
-        if (control) {
+        if (control && control.type === 'range') {
           control.onWindowMousemove(e);
         }
       }
@@ -643,7 +839,7 @@ var VariaBoard = function () {
     value: function onWindowResize() {
       for (var key in this.controls) {
         var control = this.controls[key];
-        if (control) {
+        if (control && control.type === 'range') {
           control.onWindowResize();
         }
       }
@@ -725,7 +921,13 @@ var VariaBoard = function () {
   }, {
     key: 'addRange',
     value: function addRange(config) {
-      this.controls[config.id] = new Range(this, config);
+      this.controls[config.id] = new RangeControl(this, config);
+      return this;
+    }
+  }, {
+    key: 'addBoolean',
+    value: function addBoolean(config) {
+      this.controls[config.id] = new BooleanControl(this, config);
       return this;
     }
   }, {
@@ -757,7 +959,7 @@ var VariaBoard = function () {
 
 module.exports = VariaBoard;
 
-},{"./button":1,"./controls/range":3}],5:[function(require,module,exports){
+},{"./button":1,"./controls/boolean-control":2,"./controls/range-control":4}],6:[function(require,module,exports){
 'use strict';
 
 /**
@@ -844,7 +1046,7 @@ var Calc = function () {
 
 module.exports = Calc;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1472,5 +1674,5 @@ var Ease = function () {
 
 module.exports = Ease;
 
-},{}]},{},[4])(4)
+},{}]},{},[5])(5)
 });

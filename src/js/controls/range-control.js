@@ -26,12 +26,20 @@ const Ease = require('../util/ease');
  * @requires {@link Calc}
  */
 
-class Range extends Control {
+class RangeControl extends Control {
 
   constructor(variaboard, config) {
-    super(variaboard, config);
-    this.type = 'range';
+    super();
 
+    this.type = 'range';
+    this.variaboard = variaboard;
+    this.id = config.id;
+    this.title = config.title;
+    this.default = config.default;
+    this.randomizable = config.randomizable !== undefined ? config.randomizable : true;
+    this.mutable = config.mutable !== undefined ? config.mutable : true;
+    this.locked = config.locked !== undefined ? config.locked : false;
+    this.suffix = config.suffix !== undefined ? config.suffix : '';
     this.min = config.min;
     this.max = config.max;
     this.size = this.max - this.min;
@@ -41,8 +49,8 @@ class Range extends Control {
     this.easedFunc = config.easedFunc !== undefined ? Ease[config.easedFunc] : Ease['outExpo'];
     this.places = this.step.toString().indexOf('.') > -1 ? this.step.toString().split('.')[1].length : 0;
 
-    this.easedValueStart = this.value;
-    this.easedValueTarget = this.value;
+    this.easedValueStart = this.default;
+    this.easedValueTarget = this.default;
     this.easedTime = null;
     this.easedLastTime = null;
     this.easedElapsedTime = 0;
@@ -51,14 +59,42 @@ class Range extends Control {
     this.settled = false;
     this.isFocused = false;
 
+    this.createDOM();
+
     this.onWindowResize();
 
     this.listen();
-    this.set(this.value, true);
+    this.set(this.default, true, false);
   }
 
   createDOM() {
-    super.createDOM();
+    this.dom = {};
+
+    // control
+    this.dom.control = document.createElement('div');
+    this.dom.control.classList.add(`${this.variaboard.namespace}-control`);
+
+    // title
+    this.dom.title = document.createElement('label');
+    this.dom.title.classList.add(`${this.variaboard.namespace}-control-title`);
+    this.dom.title.textContent = this.title;
+    this.dom.title.setAttribute('for', `${this.variaboard.namespace}-${this.id}-${this.variaboard.id}`);
+    this.dom.control.appendChild(this.dom.title);
+
+    // value
+    this.dom.value = document.createElement('input');
+    this.dom.value.classList.add(`${this.variaboard.namespace}-control-value`);
+    this.dom.value.setAttribute('id', `${this.variaboard.namespace}-${this.id}-${this.variaboard.id}`);
+    this.dom.control.appendChild(this.dom.value);
+
+    // add control to panel
+    this.variaboard.dom.controls.appendChild(this.dom.control);
+
+    // suffix
+    this.dom.suffix = document.createElement('div');
+    this.dom.suffix.classList.add(`${this.variaboard.namespace}-control-suffix`);
+    this.dom.suffix.textContent = this.suffix;
+    this.dom.control.appendChild(this.dom.suffix);
 
     // randomize
     this.dom.randomize = document.createElement('div');
@@ -223,6 +259,14 @@ class Range extends Control {
     this.dom.control.classList.remove(`${this.variaboard.namespace}-control-mutating`);
   }
 
+  lock() {
+    this.locked = true;
+  }
+
+  unlock() {
+    this.locked = false;
+  }
+
   setDragValue() {
     this.set(Calc.map(this.variaboard.mouse.x, this.bcr.left, this.bcr.right, this.min, this.max));
     this.easedValueTarget = this.value;
@@ -247,7 +291,7 @@ class Range extends Control {
     }
   }
 
-  set(val, force = false) {
+  set(val, force = false, triggerChange = true) {
     // sanitize value
     val = parseFloat(val);
     val = isNaN(val) ? this.default : val;
@@ -269,13 +313,15 @@ class Range extends Control {
     this.dom.rangeInner.style.transform = `scaleX(${Calc.map(this.value, this.min, this.max, 0, 1)})`;
 
     // set the title attribute for the control
-    this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}`);
+    this.dom.control.setAttribute('title', `${this.title}: ${this.value.toFixed(this.places)}${this.suffix}`);
 
     // queue up change callback
-    window.cancelAnimationFrame(this.variaboard.changeRaf);
-    this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
+    if(triggerChange) {
+      window.cancelAnimationFrame(this.variaboard.changeRaf);
+      this.variaboard.changeRaf = window.requestAnimationFrame(this.variaboard.changeCallback.bind(this.variaboard));
+    }
   }
 
 }
 
-module.exports = Range;
+module.exports = RangeControl;

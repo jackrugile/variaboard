@@ -13,17 +13,26 @@
   <body>
     <script src="./js/variaboard.min.js"></script>
     <script>
-      let varia = new VariaBoard({
+      let vb = new VariaBoard({
         container: document.body,
         title: 'VariaBoard 1',
         changeCallback: () => {
-          //console.log(123);
         }
       });
 
-      varia.addRange({
+      vb.addBoolean({
+        id: 'dark',
+        title: 'Dark',
+        default: true,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      vb.addRange({
         id: 'width',
         title: 'Width',
+        suffix: 'px',
         min: 0,
         max: 400,
         step: 0.5,
@@ -33,9 +42,10 @@
         locked: false
       });
 
-      varia.addRange({
+      vb.addRange({
         id: 'height',
         title: 'Height',
+        suffix: 'px',
         min: 0,
         max: 300,
         step: 0.5,
@@ -45,33 +55,10 @@
         locked: false
       });
 
-      varia.addRange({
+      vb.addRange({
         id: 'rotation',
         title: 'Rotation',
-        min: 0,
-        max: 300,
-        step: 1,
-        default: 0,
-        randomizable: true,
-        mutable: true,
-        locked: false
-      });
-
-      varia.addRange({
-        id: 'radius',
-        title: 'Radius',
-        min: 1,
-        max: 140,
-        step: 1,
-        default: 10,
-        randomizable: true,
-        mutable: true,
-        locked: false
-      });
-
-      varia.addRange({
-        id: 'hue',
-        title: 'Hue',
+        suffix: 'deg',
         min: 0,
         max: 360,
         step: 1,
@@ -81,9 +68,36 @@
         locked: false
       });
 
-      varia.addRange({
+      vb.addRange({
+        id: 'radius',
+        title: 'Radius',
+        suffix: 'px',
+        min: 1,
+        max: 140,
+        step: 1,
+        default: 10,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      vb.addRange({
+        id: 'hue',
+        title: 'Hue',
+        suffix: 'deg',
+        min: 0,
+        max: 360,
+        step: 1,
+        default: 0,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      vb.addRange({
         id: 'saturation',
         title: 'Saturation',
+        suffix: '%',
         min: 50,
         max: 100,
         step: 1,
@@ -93,9 +107,10 @@
         locked: false
       });
 
-      varia.addRange({
+      vb.addRange({
         id: 'lightness',
         title: 'Lightness',
+        suffix: '%',
         min: 20,
         max: 80,
         step: 1,
@@ -105,9 +120,10 @@
         locked: false
       });
 
-      varia.addRange({
+      vb.addRange({
         id: 'alpha',
         title: 'Alpha',
+        suffix: null,
         min: 0.5,
         max: 1,
         step: 0.01,
@@ -117,21 +133,21 @@
         locked: false
       });
 
-      varia.addButton({
+      vb.addButton({
         id: 'randomize',
         title: 'Randomize',
         description: 'Set all controls to a random value',
         callback: () => {
-          varia.randomize();
+          vb.randomize();
         }
       });
 
-      varia.addButton({
+      vb.addButton({
         id: 'mutate',
         title: 'Mutate',
         description: 'Change the value of all controls slightly',
         callback: () => {
-          varia.mutate();
+          vb.mutate();
         }
       });
 
@@ -151,52 +167,52 @@
         requestAnimationFrame(loop);
 
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = '#000'
+        ctx.fillStyle = vb.get('dark') ? '#000' : '#fff';
         ctx.fillRect(0, 0, w, h);
 
-        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalCompositeOperation = vb.get('dark') ? 'lighter' : 'source-over';
 
         ctx.save();
           ctx.translate(w * 0.25, h / 2);
-          ctx.rotate(varia.get('rotation') / 360 * Math.PI * 2);
-          ctx.fillStyle = `hsla(${varia.get('hue') - 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
-          ctx.fillRect(varia.get('width') / -2, varia.get('height') / -2, varia.get('width'), varia.get('height'));
+          ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+          ctx.fillStyle = `hsla(${vb.get('hue') - 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+          ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
         ctx.restore();
 
         ctx.save();
           ctx.translate(w / 2, h / 2);
-          ctx.rotate(varia.get('rotation') / 360 * Math.PI * 2);
-          ctx.fillStyle = `hsla(${varia.get('hue')}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
-          ctx.fillRect(varia.get('width') / -2, varia.get('height') / -2, varia.get('width'), varia.get('height'));
+          ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+          ctx.fillStyle = `hsla(${vb.get('hue')}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+          ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
         ctx.restore();
 
         ctx.save();
           ctx.translate(w * 0.75, h / 2);
-          ctx.rotate(varia.get('rotation') / 360 * Math.PI * 2);
-          ctx.fillStyle = `hsla(${varia.get('hue') + 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
-          ctx.fillRect(varia.get('width') / -2, varia.get('height') / -2, varia.get('width'), varia.get('height'));
+          ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+          ctx.fillStyle = `hsla(${vb.get('hue') + 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+          ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
         ctx.restore();
 
         ctx.beginPath();
-        ctx.fillStyle = `hsla(${varia.get('hue') + 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
-        ctx.arc(w * 0.25, h / 2, varia.get('radius'), 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${vb.get('hue') + 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+        ctx.arc(w * 0.25, h / 2, vb.get('radius'), 0, Math.PI * 2);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = `hsla(${varia.get('hue') + 180}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
-        ctx.arc(w / 2, h / 2, varia.get('radius'), 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${vb.get('hue') + 180}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+        ctx.arc(w / 2, h / 2, vb.get('radius'), 0, Math.PI * 2);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = `hsla(${varia.get('hue') - 90}, ${varia.get('saturation')}%, ${varia.get('lightness')}%, ${varia.get('alpha')})`;
-        ctx.arc(w * 0.75, h / 2, varia.get('radius'), 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${vb.get('hue') - 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+        ctx.arc(w * 0.75, h / 2, vb.get('radius'), 0, Math.PI * 2);
         ctx.fill();
 
       }
 
       loop();
 
-      let varia2 = new VariaBoard({
+      let vb2 = new VariaBoard({
         container: document.body,
         class: 'vb2',
         title: 'VariaBoard 2',
@@ -205,7 +221,7 @@
         }
       });
 
-      varia2.addRange({
+      vb2.addRange({
         id: 'scale',
         title: 'Scale',
         min: 0.1,

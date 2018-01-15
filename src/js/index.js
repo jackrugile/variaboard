@@ -1,7 +1,8 @@
 'use strict';
 
 const Button = require('./button');
-const Range = require('./controls/range');
+const RangeControl = require('./controls/range-control');
+const BooleanControl = require('./controls/boolean-control');
 
 class VariaBoard {
 
@@ -101,7 +102,9 @@ class VariaBoard {
     this.mouse.down = false;
     for(let key in this.controls) {
       let control = this.controls[key];
-      control.onWindowMouseup(e);
+      if(control && control.type === 'range') {
+        control.onWindowMouseup(e);
+      }
     }
   }
 
@@ -116,7 +119,7 @@ class VariaBoard {
     this.mouse.y = e.clientY;
     for(let key in this.controls) {
       let control = this.controls[key];
-      if(control) {
+      if(control && control.type === 'range') {
         control.onWindowMousemove(e);
       }
     }
@@ -129,7 +132,7 @@ class VariaBoard {
   onWindowResize() {
     for(let key in this.controls) {
       let control = this.controls[key];
-      if(control) {
+      if(control && control.type === 'range') {
         control.onWindowResize();
       }
     }
@@ -199,7 +202,12 @@ class VariaBoard {
    */
 
   addRange(config) {
-    this.controls[config.id] = new Range(this, config);
+    this.controls[config.id] = new RangeControl(this, config);
+    return this;
+  }
+
+  addBoolean(config) {
+    this.controls[config.id] = new BooleanControl(this, config);
     return this;
   }
 
