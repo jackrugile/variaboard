@@ -70,6 +70,7 @@ class VariaBoard {
       this.dom.title = document.createElement('h1');
       this.dom.title.classList.add(`${this.namespace}-title`);
       this.dom.title.textContent = this.title;
+      this.dom.title.setAttribute('title', this.title);
       this.dom.panel.appendChild(this.dom.title);
     }
 
@@ -158,7 +159,7 @@ class VariaBoard {
       if(this.controls[key].type === 'range') {
         if(!this.controls[key].settled) {
           this.needsUpdate = true;
-          this.controls[key].easeSet();
+          this.controls[key].easeUpdate();
         }
       }
     }
@@ -215,6 +216,28 @@ class VariaBoard {
     let control = this.controls[id];
     if(control) {
       return control.value;
+    }
+  }
+
+  set(id, val) {
+    let control = this.controls[id];
+    if(control) {
+      if(control.eased) {
+        control.easeSet(val);
+      } else {
+        control.set(val);
+      }
+    }
+  }
+
+  reset() {
+    for(let key in this.controls) {
+      let control = this.controls[key];
+      if(control.eased) {
+        control.easeSet(control.default);
+      } else {
+        control.set(control.default);
+      }
     }
   }
 
