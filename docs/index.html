@@ -169,7 +169,7 @@
         id: 'reset',
         title: 'Reset',
         description: 'Set all controls to their default values',
-        callback: () => {
+        callback: (e, button, variaboard) => {
           vb.reset();
         }
       });
@@ -178,7 +178,7 @@
         id: 'randomize',
         title: 'Randomize',
         description: 'Set all controls to a random value',
-        callback: () => {
+        callback: (e, button, variaboard) => {
           vb.randomize();
         }
       });
@@ -187,8 +187,17 @@
         id: 'mutate',
         title: 'Mutate',
         description: 'Change the value of all controls slightly',
-        callback: () => {
+        callback: (e, button, variaboard) => {
           vb.mutate();
+        }
+      });
+
+      vb.addButton({
+        id: 'tester',
+        title: 'Tester',
+        callback: (e, button, variaboard) => {
+          button.dom.button.setAttribute('href', c.toDataURL('image/png'));
+          button.dom.button.setAttribute('download', 'wow.png');
         }
       });
 

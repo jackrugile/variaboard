@@ -280,6 +280,7 @@
   padding: 0 1.5em;
   position: relative;
   text-align: left;
+  text-decoration: none;
   transition: color 200ms;
   width: 100%;
   -webkit-appearance: none;

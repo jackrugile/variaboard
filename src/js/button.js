@@ -10,7 +10,7 @@ class Button {
     this.variaboard = variaboard;
     this.id = config.id;
     this.title = config.title;
-    this.description = config.description;
+    this.description = config.description !== undefined ? config.description : null;
     this.callback = config.callback !== undefined ? config.callback : () => {};
 
     this.createDOM();
@@ -29,10 +29,14 @@ class Button {
     this.dom.control.classList.add(`${this.variaboard.namespace}-control`);
 
     // button
-    this.dom.button = document.createElement('button');
+    this.dom.button = document.createElement('a');
     this.dom.button.classList.add(`${this.variaboard.namespace}-button`);
     this.dom.button.textContent = this.title;
-    this.dom.control.setAttribute('title', `${this.title}: ${this.description}`);
+    if(this.description) {
+      this.dom.control.setAttribute('title', `${this.title}: ${this.description}`);
+    } else {
+      this.dom.control.setAttribute('title', `${this.title}`);
+    }
     this.dom.control.appendChild(this.dom.button);
 
     // add to control to panel
@@ -53,8 +57,8 @@ class Button {
    * @param {object} e - Event object
    */
 
-  onButtonClick() {
-    this.callback();
+  onButtonClick(e) {
+    this.callback(e, this, this.variaboard);
   }
 
 }
