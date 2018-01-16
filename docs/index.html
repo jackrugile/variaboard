@@ -9,6 +9,29 @@
     <meta name="author" content="Jack Rugile">
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="./css/variaboard.min.css">
+    <style>
+      /* demo specific code */
+
+      body {
+        background: radial-gradient(#333, #111);
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      canvas {
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+
+      .variaboard-panel.vb2 {
+        left: auto;
+        right: 0;
+      }
+    </style>
   </head>
   <body>
     <script src="./js/variaboard.min.js"></script>
@@ -23,6 +46,16 @@
       vb.addBoolean({
         id: 'dark',
         title: 'Dark',
+        description: 'Toggle a dark or light fill',
+        default: true,
+        randomizable: true,
+        mutable: true,
+        locked: false
+      });
+
+      vb.addBoolean({
+        id: 'spinning',
+        title: 'Spinning',
         default: true,
         randomizable: true,
         mutable: true,
@@ -123,7 +156,6 @@
       vb.addRange({
         id: 'alpha',
         title: 'Alpha',
-        suffix: null,
         min: 0.5,
         max: 1,
         step: 0.01,
@@ -131,6 +163,15 @@
         randomizable: true,
         mutable: true,
         locked: false
+      });
+
+      vb.addButton({
+        id: 'reset',
+        title: 'Reset',
+        description: 'Set all controls to their default values',
+        callback: () => {
+          vb.reset();
+        }
       });
 
       vb.addButton({
@@ -151,11 +192,27 @@
         }
       });
 
+      setTimeout(() => {
+        // vb.addRange({
+        //   id: 'wow',
+        //   title: 'Wow',
+        //   suffix: 'deg',
+        //   min: 0,
+        //   max: 360,
+        //   step: 1,
+        //   default: 0,
+        //   randomizable: true,
+        //   mutable: true,
+        //   locked: false
+        // });
+      }, 6000);
+
       let c = document.createElement('canvas');
       let ctx = c.getContext('2d');
       let w = 400;
       let h = 400;
       let dpr = window.devicePixelRatio;
+      let rotation = 0;
       c.width = w * dpr;
       c.height = h * dpr;
       c.style.width = `${w}px`;
@@ -173,41 +230,52 @@
         ctx.globalCompositeOperation = vb.get('dark') ? 'lighter' : 'source-over';
 
         ctx.save();
-          ctx.translate(w * 0.25, h / 2);
-          ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
-          ctx.fillStyle = `hsla(${vb.get('hue') - 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
-          ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
-        ctx.restore();
 
-        ctx.save();
+          if(vb.get('spinning')) {
+            rotation += 0.01
+          }
+
           ctx.translate(w / 2, h / 2);
-          ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
-          ctx.fillStyle = `hsla(${vb.get('hue')}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
-          ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
-        ctx.restore();
+          ctx.rotate(rotation % (Math.PI * 2));
+          ctx.translate(w / -2, h / -2);
 
-        ctx.save();
-          ctx.translate(w * 0.75, h / 2);
-          ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+          ctx.save();
+            ctx.translate(w * 0.25, h / 2);
+            ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+            ctx.fillStyle = `hsla(${vb.get('hue') - 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+            ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
+          ctx.restore();
+
+          ctx.save();
+            ctx.translate(w / 2, h / 2);
+            ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+            ctx.fillStyle = `hsla(${vb.get('hue')}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+            ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
+          ctx.restore();
+
+          ctx.save();
+            ctx.translate(w * 0.75, h / 2);
+            ctx.rotate(vb.get('rotation') / 360 * Math.PI * 2);
+            ctx.fillStyle = `hsla(${vb.get('hue') + 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+            ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
+          ctx.restore();
+
+          ctx.beginPath();
           ctx.fillStyle = `hsla(${vb.get('hue') + 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
-          ctx.fillRect(vb.get('width') / -2, vb.get('height') / -2, vb.get('width'), vb.get('height'));
+          ctx.arc(w * 0.25, h / 2, vb.get('radius'), 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${vb.get('hue') + 180}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+          ctx.arc(w / 2, h / 2, vb.get('radius'), 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${vb.get('hue') - 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
+          ctx.arc(w * 0.75, h / 2, vb.get('radius'), 0, Math.PI * 2);
+          ctx.fill();
+
         ctx.restore();
-
-        ctx.beginPath();
-        ctx.fillStyle = `hsla(${vb.get('hue') + 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
-        ctx.arc(w * 0.25, h / 2, vb.get('radius'), 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.fillStyle = `hsla(${vb.get('hue') + 180}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
-        ctx.arc(w / 2, h / 2, vb.get('radius'), 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.fillStyle = `hsla(${vb.get('hue') - 90}, ${vb.get('saturation')}%, ${vb.get('lightness')}%, ${vb.get('alpha')})`;
-        ctx.arc(w * 0.75, h / 2, vb.get('radius'), 0, Math.PI * 2);
-        ctx.fill();
-
       }
 
       loop();

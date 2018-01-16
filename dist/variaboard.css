@@ -1,19 +1,6 @@
-body {
-  background: radial-gradient(#333, #111);
-  min-height: 100vh;
-  overflow: hidden;
-}
-
-canvas {
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-
-/* --- */
+/**
+ * VariaBoard Panel
+ */
 
 .variaboard-panel,
 .variaboard-panel * {
@@ -22,26 +9,29 @@ canvas {
 
 .variaboard-panel {
   background: #000;
-  box-shadow: 0 0 0 1px #000;
+  border: 1px solid #000;
   color: #fff;
   font-family: source code pro, monospace;
-  font-size: 16px;
+  font-size: 14px;
   left: 0;
-  max-width: 450px;
+  max-height: 100%;
+  max-width: 300px;
+  overflow: auto;
   position: fixed;
   top: 0;
   transition: opacity 200ms;
   width: 100%;
   z-index: 99;
-}
-
-.variaboard-panel.variaboard-is-dragging {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
+
+/**
+ * Selections
+ */
 
 .variaboard-title::-moz-selection,
 .variaboard-control-title::-moz-selection,
@@ -67,42 +57,72 @@ canvas {
   color: #000;
 }
 
+/**
+ * VariaBoard Title
+ */
+
 .variaboard-title {
-  background: #000;
-  border-bottom: 1px solid #000;
+  background: #111;
   color: #fff;
+  height: 28px;
   font-size: 0.8em;
   font-weight: 700;
-  line-height: 1;
-  margin: 0;
-  padding: 1.2em 0.75em;
+  line-height: 28px;
+  margin: 0 0 1px;
+  overflow: hidden;
+  padding: 0 1.5em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+/**
+ * Controls
+ */
 
 .variaboard-controls {
 }
 
+/**
+ * Control
+ */
+
 .variaboard-control {
-  border-bottom: 1px solid #000;
+  border-left: 3px solid #444;
   display: -webkit-box;
   display: flex;
-  transition: background 200ms;
+  height: 28px;
+  margin-bottom: 1px;
+  transition: background 200ms, border-color 200ms;
 }
 
 .variaboard-control:hover {
+  border-left-color: #666;
   transition-duration: 0ms;
 }
 
 .variaboard-control:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
+/**
+ * Control Title
+ */
+
 .variaboard-control-title {
+  -webkit-box-align: center;
+          align-items: center;
   background: #222;
-  color: #999;
+  border-left: 1px solid #000;
+  color: #bbb;
+  cursor: pointer;
+  display: -webkit-box;
+  display: flex;
   -webkit-box-flex: 0;
-          flex: 0 0 120px;
+          flex: 0 0 110px;
   font-size: 0.8em;
   font-weight: 400;
+  -webkit-box-pack: end;
+          justify-content: flex-end;
   line-height: 1;
   margin: 0 1px 0 0;
   overflow: hidden;
@@ -118,31 +138,106 @@ canvas {
   transition-duration: 0ms;
 }
 
+/**
+ * Control Checkbox
+ */
+
 .variaboard-control-checkbox-wrap {
+  -webkit-box-align: center;
+          align-items: center;
   background: #111;
+  border: 1px solid #111;
+  cursor: pointer;
+  display: -webkit-box;
+  display: flex;
   -webkit-box-flex: 0;
           flex: 0 0 80px;
   margin: 0 1px 0 0;
-  padding: 0.6em 0.75em;
+  padding: 0 0.6em;
+  position: relative;
 }
 
 .variaboard-control-checkbox {
-  display: block;
-  margin: 0;
+  cursor: pointer;
+  opacity: 0;
+  position: absolute
+}
+
+.variaboard-control-checkbox-indicator {
+  -webkit-box-align: center;
+          align-items: center;
+  background: none;
+  border: 1px solid #333;
+  cursor: pointer;
+  display: -webkit-box;
+  display: flex;
+  height: 1.2em;
+  -webkit-box-pack: center;
+          justify-content: center;
+  transition: background 200ms;
+  width: 1.2em;
+}
+
+.variaboard-control-checkbox-indicator:before {
+  color: #bbb;
+  content: '\2713';
+  font-size: 0.8em;
+  opacity: 0;
+  transition: color 200ms, opacity 200ms;
+}
+
+.variaboard-control.variaboard-control-is-focused .variaboard-control-checkbox-indicator {
+  border-color: #fff;
+}
+
+.variaboard-control-checkbox:checked ~ .variaboard-control-checkbox-indicator {
+  background: #222;
+}
+
+.variaboard-control-checkbox:checked ~ .variaboard-control-checkbox-indicator:before {
+  opacity: 1;
+}
+
+.variaboard-control:hover .variaboard-control-checkbox:checked ~ .variaboard-control-checkbox-indicator:before {
+  color: #fff;
+}
+
+.variaboard-control.variaboard-control-is-focused .variaboard-control-checkbox:checked ~ .variaboard-control-checkbox-indicator:before {
+  color: #fff;
+}
+
+.variaboard-control-title:active ~ .variaboard-control-checkbox-wrap .variaboard-control-checkbox-indicator,
+.variaboard-control-checkbox-wrap:active .variaboard-control-checkbox-indicator {
+  border-color: #fff;
+}
+
+.variaboard-control-checkbox-stub {
+  background: #111;
+  -webkit-box-flex: 1;
+          flex: 1 1 auto;
+}
+
+/**
+ * Control Value
+ */
+
+.variaboard-control-value-wrap {
+  -webkit-box-flex: 0;
+          flex: 0 0 80px;
+  margin: 0 1px 0 0;
 }
 
 .variaboard-control-value {
   background: #111;
   border: 1px solid #111;
   border-radius: 0;
-  color: inherit;
-  -webkit-box-flex: 0;
-          flex: 0 0 80px;
+  color: #bbb;
   font-family: inherit;
   font-size: 0.8em;
   font-weight: 400;
+  height: 100%;
   line-height: 1;
-  margin: 0 1px 0 0;
+  margin: 0;
   padding: 0.6em 0.75em;
   transition: color 200ms, border-color 200ms;
   width: 100%;
@@ -156,103 +251,74 @@ canvas {
 
 .variaboard-control-value:focus {
   border-color: #fff;
+  color: #fff;
   outline: none;
   transition-duration: 0ms;
 }
 
-.variaboard-control-suffix {
-  background: #222;
-  border: 1px solid #222;
-  color: #666;
-  -webkit-box-flex: 0;
-          flex: 0 0 50px;
-  font-size: 0.8em;
-  font-weight: 400;
-  line-height: 1;
-  margin: 0;
-  margin-right: 1px;
-  overflow: hidden;
-  padding: 0.6em 0.75em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.variaboard-control-randomize {
-  -webkit-box-align: center;
-          align-items: center;
-  background: linear-gradient(#333, #222);
-  cursor: pointer;
-  border-right: 1px solid #000;
-  box-shadow: inset 0 1px 0 #444;
-  display: -webkit-box;
-  display: flex;
-  padding: 0 0.5em;
-}
-
-.variaboard-control-randomize-svg {
-  height: 16px;
-  fill: #555;
-  transition: fill 200ms;
-  width: 16px;
-}
-
-.variaboard-control-randomize:hover .variaboard-control-randomize-svg,
-.variaboard-control.variaboard-control-randomizing .variaboard-control-randomize-svg {
-  fill: #fff;
-  transition-duration: 0ms;
-}
-
-.variaboard-control-mutate {
-  -webkit-box-align: center;
-          align-items: center;
-  background: linear-gradient(#333, #222);
-  cursor: pointer;
-  border-right: 1px solid #000;
-  box-shadow: inset 0 1px 0 #444;
-  display: -webkit-box;
-  display: flex;
-  padding: 0 0.5em;
-}
-
-.variaboard-control-mutate-svg {
-  height: 16px;
-  fill: #555;
-  transition: fill 200ms;
-  width: 16px;
-}
-
-.variaboard-control-mutate:hover .variaboard-control-mutate-svg,
-.variaboard-control.variaboard-control-mutating .variaboard-control-mutate-svg {
-  fill: #fff;
-  transition-duration: 0ms;
-}
+/**
+ * Button
+ */
 
 .variaboard-button {
-  background: #444;
+  -webkit-box-align: center;
+          align-items: center;
+  background: linear-gradient(#333 50%, #222 50%);
   border: none;
-  border-right: 1px solid #000;
+  border-left: 1px solid #000;
   border-radius: 0;
-  color: #fff;
+  color: #bbb;
   cursor: pointer;
+  display: -webkit-box;
+  display: flex;
   font-family: inherit;
   font-size: 0.8em;
-  font-weight: 400;
+  font-weight: 700;
+  height: 100%;
   line-height: 1;
   margin: 0;
-  padding: 1.2em 1.5em;
-  transition: background 200ms, color 200ms;
+  padding: 0 1.5em;
+  position: relative;
+  text-align: left;
+  transition: color 200ms;
+  width: 100%;
   -webkit-appearance: none;
 }
 
-.variaboard-button:active {
+.variaboard-button:after {
   background: #fff;
-  color: #000;
+  bottom: 0;
+  content: '';
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 200ms;
+}
+
+.variaboard-button:hover {
+  color: #fff;
+  transition-duration: 0ms;
+}
+
+.variaboard-button:active {
+  transition-duration: 0ms;
+}
+
+.variaboard-button:active:after {
+  opacity: 0.3;
   transition-duration: 0ms;
 }
 
 .variaboard-button:focus {
+  box-shadow: inset 0 0 0 1px #fff;
   outline: none;
 }
+
+/**
+ * Control Range
+ */
 
 .variaboard-control-range {
   background: #111;
@@ -260,8 +326,9 @@ canvas {
   cursor: -webkit-grab;
   cursor: grab;
   -webkit-box-flex: 1;
-          flex: 1 1 45%;
+          flex: 1 1 auto;
   overflow: hidden;
+  position: relative;
 }
 
 .variaboard-control.variaboard-control-is-dragging .variaboard-control-range {
@@ -271,29 +338,39 @@ canvas {
 }
 
 .variaboard-control-range-inner {
-  background: #555;
+  background: #222;
   height: 101%;
-  -webkit-transform: scaleX(0);
-          transform: scaleX(0);
-  -webkit-transform-origin: 0% 50%;
-          transform-origin: 0% 50%;
-  transition: background 200ms, -webkit-transform 100ms;
-  transition: background 200ms, transform 100ms;
-  transition: background 200ms, transform 100ms, -webkit-transform 100ms;
-  width: 100%;
+  left: 0;
+  position: absolute;
+  right: 1px;
+  top: 0;
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+  transition: background 200ms, -webkit-transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
+  transition: background 200ms, transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
+  transition: background 200ms, transform 300ms cubic-bezier(0.19, 1, 0.22, 1), -webkit-transform 300ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.variaboard-control-range-inner:after {
+  background: linear-gradient(#999, #444);
+  bottom: 0;
+  content: '';
+  left: 100%;
+  position: absolute;
+  top: 0;
+  transition: background 200ms;
+  width: 1px;
+}
+
+.variaboard-control.variaboard-control-eased .variaboard-control-range-inner {
+  transition: background 200ms;
 }
 
 .variaboard-control:hover .variaboard-control-range-inner {
-  background: #fff;
+  background: #333;
+  transition-duration: 0ms;
 }
 
 .variaboard-control.variaboard-control-is-dragging .variaboard-control-range-inner {
   transition-duration: 0ms;
-}
-
-/* --- */
-
-.variaboard-panel.vb2 {
-  left: auto;
-  right: 0;
 }
