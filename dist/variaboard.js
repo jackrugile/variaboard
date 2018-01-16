@@ -704,6 +704,7 @@ var VariaBoard = function () {
     this.needsUpdate = false;
     this.raf = null;
     this.isDragging = false;
+    this.isCollapsed = false;
 
     this.changeRaf = null;
 
@@ -740,7 +741,7 @@ var VariaBoard = function () {
         this.dom.title = document.createElement('h1');
         this.dom.title.classList.add(this.namespace + '-title');
         this.dom.title.textContent = this.title;
-        this.dom.title.setAttribute('title', this.title);
+        this.dom.title.setAttribute('title', this.title + ': Click to toggle visibility');
         this.dom.panel.appendChild(this.dom.title);
       }
 
@@ -770,6 +771,10 @@ var VariaBoard = function () {
       });
       window.addEventListener('resize', function () {
         return _this.onWindowResize();
+      });
+
+      this.dom.title.addEventListener('click', function () {
+        return _this.onTitleClick();
       });
     }
 
@@ -822,6 +827,17 @@ var VariaBoard = function () {
         if (control && control.type === 'range') {
           control.onWindowResize();
         }
+      }
+    }
+  }, {
+    key: 'onTitleClick',
+    value: function onTitleClick() {
+      if (this.isCollapsed) {
+        this.dom.panel.classList.remove(this.namespace + '-panel-is-collapsed');
+        this.isCollapsed = false;
+      } else {
+        this.dom.panel.classList.add(this.namespace + '-panel-is-collapsed');
+        this.isCollapsed = true;
       }
     }
   }, {

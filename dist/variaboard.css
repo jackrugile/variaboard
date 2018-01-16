@@ -64,6 +64,7 @@
 .variaboard-title {
   background: #111;
   color: #fff;
+  cursor: pointer;
   height: 28px;
   font-size: 0.8em;
   font-weight: 700;
@@ -75,11 +76,19 @@
   white-space: nowrap;
 }
 
+.variaboard-panel-is-collapsed .variaboard-title {
+  margin-bottom: 0;
+}
+
 /**
  * Controls
  */
 
 .variaboard-controls {
+}
+
+.variaboard-panel-is-collapsed .variaboard-controls {
+  display: none;
 }
 
 /**
